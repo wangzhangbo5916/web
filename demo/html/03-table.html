@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML Table Example</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+        caption {
+            font-size: larger;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Table structure -->
+    <table>
+        <!-- Table caption -->
+        <caption>Employee Details</caption>
+
+        <!-- Table head -->
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Department</th>
+            </tr>
+        </thead>
+
+        <!-- Table body -->
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Alice</td>
+                <td>Manager</td>
+                <td>HR</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Bob</td>
+                <td>Developer</td>
+                <td>IT</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Charlie</td>
+                <td>Designer</td>
+                <td>Marketing</td>
+            </tr>
+        </tbody>
+
+        <!-- Table foot -->
+        <tfoot>
+            <tr>
+                <td colspan="4">Company XYZ &copy; 2024</td>
+            </tr>
+        </tfoot>
+    </table>
+
+</body>
+</html>

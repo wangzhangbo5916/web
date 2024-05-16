@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML Image Map Example</title>
+</head>
+<body>
+
+    <!-- Image with linked areas -->
+    <img src="https://img1.baidu.com/it/u=3353985195,2581327310&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=500" alt="Example Image" usemap="#imagemap">
+
+    <!-- Image map definition -->
+    <map name="imagemap">
+        <!-- Define clickable areas on the image -->
+        <area shape="rect" coords="34,44,270,350" href="https://www.example.com/link1" alt="Link 1" target="_blank">
+        <area shape="circle" coords="45,300,60" href="https://www.example.com/link2" alt="Link 2" target="_blank">
+        <area shape="poly" coords="129,8,213,45,189,78,123,95" href="https://www.example.com/link3" alt="Link 3" target="_blank">
+    </map>
+    
+    <!-- Text link -->
+    <a href="https://image.baidu.com/">Visit Example.com</a>
+    
+    <!-- Image as a link -->
+    <a href="https://image.baidu.com/">
+        <img src="https://inews.gtimg.com/om_bt/OHu7kAnYOhQtQFgUJRflkwQlSZGmsxzKpYhrbVRDFWHQ0AA/1000" alt="Link Image">
+    </a>
+
+</body>
+</html>
