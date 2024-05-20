@@ -10,6 +10,29 @@
 - **伪元素选择器**: 选择元素的特定部分，如 ::before, ::after。
 - **组合选择器**: 使用组合器组合多个选择器，如后代选择器（空格）、子选择器（>）、相邻兄弟选择器（+）和通用兄弟选择器（~）。
 
+### CSS 属性选择器
+
+CSS 属性选择器是一种特殊类型的选择器，它可以根据元素的属性及其值来选择元素。以下是常用的 CSS 属性选择器：
+
+1. 存在和值属性选择器
+   - [attr]：选择包含 attr 属性的所有元素，不论属性值为何。
+2. 精确值属性选择器
+   - [attr="value"]：选择 attr 属性的值完全等于 value 的所有元素。
+3. 部分值属性选择器
+   - [attr*="value"]：选择 attr 属性的值中包含子字符串 value 的所有元素。
+   - [attr^="value"]：选择 attr 属性的值以 value 开头的所有元素。
+   - [attr$="value"]：选择 attr 属性的值以 value 结尾的所有元素。
+4. 语言子代码属性选择器
+   - [attr|="value"]：选择 attr 属性的值是 value 或以 value-开头的所有元素（常用于语言代码选择，如[lang|="en"]）。
+5. 包含在空格分隔的列表中的值属性选择器
+   - [attr~="value"]：选择 attr 属性的值是一个空格分隔的列表，其中一个列表项正好等于 value 的所有元素。
+6. 包含在连字符分隔的列表中的值属性选择器
+   - [attr-="value"]：这是一个较少见的属性选择器，它会选择 attr 属性的值是一个连字符分隔的列表，其中一个列表项正好等于 value 的所有元素。
+7. 大小写不敏感的属性选择器
+   - [attr="value" i]：选择 attr 属性的值等于 value，不区分大小写的所有元素。
+8. 大小写敏感的属性选择器
+   - [attr="value" s]：选择 attr 属性的值等于 value，区分大小写的所有元素。
+
 ### CSS 伪类选择器
 
 1. :active - 选择活动状态的元素，通常是被鼠标点击时。
@@ -105,20 +128,20 @@
 
 ### CSS 盒模型
 
-CSS盒模型是CSS中的基础概念，用来描述HTML文档中元素的布局和设计。一个元素的盒模型由以下几个部分组成：
+CSS 盒模型是 CSS 中的基础概念，用来描述 HTML 文档中元素的布局和设计。一个元素的盒模型由以下几个部分组成：
 
 1. 内容（Content）
-    - 描述: 盒模型的中心部分，包含元素的实际内容，如文本、图片等。
-    - 属性: width 和 height 用来设置内容区域的宽和高。
+   - 描述: 盒模型的中心部分，包含元素的实际内容，如文本、图片等。
+   - 属性: width 和 height 用来设置内容区域的宽和高。
 2. 内边距（Padding）
-    - 描述: 内容区域周围的空间，位于内容和边框之间。
-    - 属性: padding-top, padding-right, padding-bottom, padding-left 或简写为 padding。
+   - 描述: 内容区域周围的空间，位于内容和边框之间。
+   - 属性: padding-top, padding-right, padding-bottom, padding-left 或简写为 padding。
 3. 边框（Border）
-    - 描述: 内边距和外边距之间的线，围绕着内边距和内容。
-    - 属性: border-width, border-style, border-color 或简写为 border。
+   - 描述: 内边距和外边距之间的线，围绕着内边距和内容。
+   - 属性: border-width, border-style, border-color 或简写为 border。
 4. 外边距（Margin）
-    - 描述: 边框外部的空间，用于隔开元素与其他元素。
-    - 属性: margin-top, margin-right, margin-bottom, margin-left 或简写为 margin。
+   - 描述: 边框外部的空间，用于隔开元素与其他元素。
+   - 属性: margin-top, margin-right, margin-bottom, margin-left 或简写为 margin。
 
 #### 盒模型布局的重要性
 
@@ -132,7 +155,7 @@ CSS盒模型是CSS中的基础概念，用来描述HTML文档中元素的布局�
 - 计算总宽高: 总宽度 = 左右 margin + 左右 border + 左右 padding + width
 - 计算总宽高: 总高度 = 上下 margin + 上下 border + 上下 padding + height
 
-##### IE盒模型（Border-Box）
+##### IE 盒模型（Border-Box）
 
 - 特点: width 和 height 属性包括内容、内边距和边框。
 - 计算总宽高: 总宽度 = 左右 margin + width（已包含 padding 和 border）
@@ -140,28 +163,28 @@ CSS盒模型是CSS中的基础概念，用来描述HTML文档中元素的布局�
 
 ### CSS 定位方式
 
-CSS定位是布局中的一个重要概念，它决定了一个元素在页面中的位置。以下是CSS中的定位方式：
+CSS 定位是布局中的一个重要概念，它决定了一个元素在页面中的位置。以下是 CSS 中的定位方式：
 
 1. 静态定位（Static）
-    - 描述: 默认定位方式，元素按照正常的文档流进行排列。
-    - 属性: position: static;
-    - 特点: 不受 top, bottom, left, right 和 z-index 属性的影响。
+   - 描述: 默认定位方式，元素按照正常的文档流进行排列。
+   - 属性: position: static;
+   - 特点: 不受 top, bottom, left, right 和 z-index 属性的影响。
 2. 相对定位（Relative）
-    - 描述: 元素相对于其原始位置进行偏移。
-    - 属性: position: relative;
-    - 特点: 元素偏移后，原位置仍然保留。
+   - 描述: 元素相对于其原始位置进行偏移。
+   - 属性: position: relative;
+   - 特点: 元素偏移后，原位置仍然保留。
 3. 绝对定位（Absolute）
-    - 描述: 元素相对于最近的已定位（非 static）祖先元素进行定位。
-    - 属性: position: absolute;
-    - 特点: 元素从文档流中脱离，不占据空间，可通过 top, bottom, left, right 属性进行精确控制。
+   - 描述: 元素相对于最近的已定位（非 static）祖先元素进行定位。
+   - 属性: position: absolute;
+   - 特点: 元素从文档流中脱离，不占据空间，可通过 top, bottom, left, right 属性进行精确控制。
 4. 固定定位（Fixed）
-    - 描述: 元素相对于浏览器窗口进行定位。
-    - 属性: position: fixed;
-    - 特点: 即使页面滚动，元素也会停留在指定位置。
+   - 描述: 元素相对于浏览器窗口进行定位。
+   - 属性: position: fixed;
+   - 特点: 即使页面滚动，元素也会停留在指定位置。
 5. 粘性定位（Sticky）
-    - 描述: 结合了相对定位和固定定位的特点，根据用户的滚动位置进行定位。
-    - 属性: position: sticky;
-    - 特点: 元素在容器内滚动时像相对定位，到达指定偏移位置后像固定定位。
+   - 描述: 结合了相对定位和固定定位的特点，根据用户的滚动位置进行定位。
+   - 属性: position: sticky;
+   - 特点: 元素在容器内滚动时像相对定位，到达指定偏移位置后像固定定位。
 
 ## CSS 布局
 
@@ -182,6 +205,95 @@ CSS定位是布局中的一个重要概念，它决定了一个元素在页面�
 - **媒体查询**: 使用 @media 规则根据不同媒体类型和特征应用不同的样式。
 - **视口单位**: vw, vh, vmin, vmax 随视口大小变化的长度单位。
 - **百分比单位**: 使用百分比单位创建相对于父元素的大小或位置。
+
+## CSS 函数和变量
+
+CSS 函数用于在应用样式时执行一些特定的操作或计算。以下是一些常见的 CSS 函数：
+
+- calc(): 进行基本的数学运算，如加、减、乘、除。
+
+  ```css
+  div {
+    width: calc(100% - 20px);
+  }
+  ```
+
+- var(): 应用 CSS 变量的值。
+
+  ```css
+  :root {
+    --main-color: #06c;
+  }
+  div {
+    color: var(--main-color);
+  }
+  ```
+
+- attr(): 获取元素的属性值并在样式中使用。
+
+  ```css
+  a::after {
+    content: ' (' attr(href) ')';
+  }
+  ```
+
+- rgb(), rgba(): 定义颜色值，rgba()还包含透明度设置。
+
+  ```css
+  div {
+    background-color: rgba(255, 0, 0, 0.5);
+  }
+  ```
+
+- hsl(), hsla(): 以色相、饱和度和亮度（可选透明度）的方式定义颜色。
+
+  ```css
+  div {
+    color: hsla(120, 100%, 75%, 0.3);
+  }
+  ```
+
+- filter: 应用一系列的图像效果如模糊或颜色偏移。
+
+  ```css
+  img {
+    filter: blur(5px) brightness(0.8);
+  }
+  ```
+
+- url(): 引入外部资源，如背景图片。
+
+  ```css
+  div {
+    background-image: url('image.jpg');
+  }
+  ```
+
+CSS 变量，也称为自定义属性，允许你存储一个值，然后在整个文档中重复使用该值。
+
+- 声明变量：通常在:root 伪类中声明，以便全局使用。
+
+  ```css
+  img {
+    filter: blur(5px) brightness(0.8);
+  }
+  ```
+
+- 使用变量：通过 var()函数引用变量。
+
+  ```css
+  :root {
+    --main-bg-color: #9c88ff;
+  }
+  ```
+
+- 变量回退值：当变量未定义时，可以设置一个回退值。
+
+  ```css
+  div {
+    color: var(--text-color, black);
+  }
+  ```
 
 ## CSS 预处理器和后处理器
 
