@@ -514,3 +514,32 @@ backdrop-filter 属性不是所有浏览器都支持，尤其是较旧的浏览�
   /* 样式规则 */
 }
 ```
+
+## sticky 定位不生效的原因？
+
+1. 父元素的 overflow 属性
+   如果父元素或任何更高级别的祖先元素设置了 overflow: hidden、overflow: scroll 或 overflow: auto，sticky 定位可能不会生效。
+
+2. 父元素的高度不足
+   sticky 元素只能在其直接父元素内部移动。如果父元素的高度不够，sticky 元素将无法正常粘贴。
+
+3. 没有指定 top、bottom、left 或 right
+   sticky 定位需要至少指定一个 top、bottom、left 或 right 值，否则不会有粘性效果。
+
+4. 兼容性问题
+   较旧版本的浏览器可能不支持 sticky 定位。例如，Internet Explorer 就不支持 sticky 定位。
+
+5. 层叠上下文问题
+   如果 sticky 元素的任何祖先元素创建了新的层叠上下文（例如，z-index 不是 auto），可能会影响 sticky 定位的行为。
+
+6. 粘性边界限制
+   sticky 元素在达到其包含块的边界时会停止粘滞。如果包含块的边界很近，就可能导致 sticky 元素很快停止粘滞。
+
+7. 使用了 display: none
+   如果 sticky 元素或其父元素设置了 display: none，则元素不会显示，也不会有粘性效果。
+
+8. 其他 CSS 属性影响
+   某些 CSS 属性可能会间接影响 sticky 定位的效果，例如 transform、perspective 或 filter 属性。
+
+9. 父元素的 display 属性
+   如果 sticky 元素的父元素使用了 display: inline 这样的内联属性，可能会导致 sticky 不生效。
