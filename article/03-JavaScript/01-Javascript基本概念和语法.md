@@ -622,3 +622,279 @@ for (let item of collection) {
   console.log(item); // 1, 2, 3
 }
 ```
+
+### BigInt 的基础语法以及属性方法
+
+BigInt 提供了在 JavaScript 中处理大整数的能力，特别是在进行高精度计算或处理大数值的场景下非常有用。
+
+#### 基础语法
+
+BigInt 是一种内置对象，它提供了一种方法来表示大于 2^53 - 1 的整数。在 JavaScript 中，这是可以用 Number 数据类型安全表示的最大整数。BigInt 可以通过在整数后面添加 n 后缀或者调用 BigInt 函数来创建。
+
+```js
+// 使用n后缀创建BigInt
+const largeNumber = 1234567890123456789012345678901234567890n;
+
+// 使用BigInt函数创建
+const anotherLargeNumber = BigInt('1234567890123456789012345678901234567890');
+```
+
+#### 属性
+
+BigInt 类型本身没有提供任何属性。它是一个原始类型，类似于 Number，不像对象那样拥有属性。
+
+#### 方法
+
+由于 BigInt 是一个原始类型，它并不提供像对象那样的方法。但是，可以在 BigInt 实例上使用所有的基本算术运算符，以及与其他 BigInt 值进行比较。
+
+```js
+// 算术运算
+const sum = 1n + 2n; // => 3n
+const difference = 5n - 2n; // => 3n
+const product = 2n * 3n; // => 6n
+const quotient = 10n / 3n; // => 3n (注意：结果会被截断)
+const remainder = 10n % 3n; // => 1n
+
+// 比较运算
+const isEqual = 1n === 1n; // => true
+const isNotEqual = 2n !== 1n; // => true
+const isGreaterThan = 2n > 1n; // => true
+```
+
+BigInt 不支持与常规 Number 类型的混合运算，如果尝试这样做，会抛出 TypeError。如果需要进行混合运算，必须先将 Number 转换为 BigInt。
+
+```js
+const number = 5;
+const bigInt = 10n;
+
+// 将Number转换为BigInt进行混合运算
+const mixedSum = BigInt(number) + bigInt; // => 15n
+```
+
+#### 全局 BigInt 对象的方法
+
+BigInt 对象本身提供了一些用于处理 BigInt 值的静态方法。
+
+```js
+// BigInt.asIntN
+const maxInt32 = 2 ** 31 - 1;
+const bigIntValue = BigInt.asIntN(32, BigInt(maxInt32) + 1n);
+// => -2147483648n (因为超过了32位带符号整数的最大值)
+
+// BigInt.asUintN
+const maxUint32 = 2 ** 32 - 1;
+const bigIntValueUnsigned = BigInt.asUintN(32, BigInt(maxUint32) + 1n);
+// => 0n (因为超过了32位无符号整数的最大值)
+```
+
+#### 注意事项
+
+在使用 BigInt 时，需要注意以下几点：
+
+- BigInt 不能与 Number 直接混合运算。
+- JSON.stringify()不支持 BigInt 值，尝试序列化 BigInt 会抛出错误。
+- 不是所有的 JavaScript 环境都支持 BigInt，特别是在一些旧的浏览器或 JavaScript 环境中可能不可用。
+- 在进行位运算时，BigInt 的行为与 Number 不同，因为 BigInt 可以表示任意大小的整数。
+
+### globalThis
+
+#### 概述
+
+globalThis 提供了一个标准的方式来获取不同 JavaScript 环境中的全局对象。在不同的环境中，全局对象可能有不同的名字。例如，在浏览器环境中，全局对象通常是 window，在 Node.js 中是 global，在 Web Workers 中是 self。globalThis 旨在提供一个统一的、环境无关的方式来访问这个全局对象。
+
+#### 使用 globalThis
+
+globalThis 的主要用途是提供一个可靠的方法来访问全局作用域内的属性和方法，无论代码运行在什么环境中。
+
+```js
+// 设置一个全局变量
+globalThis.myGlobalVar = 'Hello, world!';
+
+// 访问一个全局变量
+console.log(globalThis.myGlobalVar); // 输出: Hello, world!
+```
+
+#### 兼容性
+
+globalThis 是在 ECMAScript 2020 规范中引入的。大多数现代浏览器和 JavaScript 环境已经实现了这个特性。但是，在一些旧的浏览器或者 JavaScript 环境中可能还不支持 globalThis。为了确保兼容性，可以使用以下的 polyfill：
+
+```js
+if (typeof globalThis === 'undefined') {
+  Object.defineProperty(Object.prototype, '_globalThis', {
+    get: function () {
+      return this;
+    },
+    configurable: true,
+  });
+  _globalThis.globalThis = _globalThis; // `this` is the global object
+  delete Object.prototype._globalThis;
+}
+```
+
+#### 注意事项
+
+- 使用 globalThis 时，应该注意不要无意中覆盖全局作用域中的重要变量。
+- 在模块化的代码中，应避免在全局作用域中添加变量或方法，而应该使用模块导出和导入来共享功能。
+- 在严格模式下，this 在全局作用域中不会指向全局对象，而 globalThis 始终会指向全局对象。
+- 虽然 globalThis 提供了一个标准的方法来访问全局对象，但是仍然推荐尽可能地使用局部变量和模块作用域，以避免潜在的命名冲突和代码维护问题。
+
+### 指数运算符
+
+#### 概述
+
+JavaScript 的指数运算符是\*\*，用于执行指数（幂）计算。它在 ES2016（也称为 ES7）中被引入 JavaScript 语言规范。
+
+#### 语法
+
+```js
+let result = base ** exponent;
+```
+
+- base 是底数。
+- exponent 是指数。
+
+#### 示例
+
+```js
+// 2的3次方
+let a = 2 ** 3; // 结果为8
+
+// 5的2次方
+let b = 5 ** 2; // 结果为25
+
+// 负数的指数
+let c = 4 ** -1; // 结果为0.25 (1/4)
+
+// 括号改变运算顺序
+let d = 2 ** (3 ** 2); // 结果为512, 因为先计算3的2次方得到9，然后计算2的9次方
+let e = (2 ** 3) ** 2; // 结果为64, 因为先计算2的3次方得到8，然后计算8的2次方
+```
+
+#### 注意事项
+
+- 指数运算符具有右结合性，意味着在没有括号的情况下，它会从右到左计算。
+- 可以使用 Math.pow()函数来获得相同的结果，这在不支持指数运算符的旧版 JavaScript 环境中尤其有用。
+
+  ```js
+  // 使用Math.pow()的等效示例
+  let f = Math.pow(2, 3); // 结果为8
+  ```
+
+- 在使用指数运算符时，如果指数是小数，那么结果将是底数的分数次幂。
+
+  ```js
+  // 使用小数作为指数
+  let g = 9 ** 0.5; // 结果为3, 因为这是9的平方根
+  ```
+
+- 指数运算符也可以与赋值运算符结合使用，形成复合赋值运算符\*\*=。
+
+  ```js
+  // 使用复合赋值运算符
+  let h = 3;
+  h **= 2; // 现在h的值为9 (等同于h = h ** 2)
+  ```
+
+### Nullish Coalescing Operator (??)
+
+#### 概述
+
+Nullish coalescing operator (??) [**非空合并运算符**]是一个逻辑运算符，它在 ES2020（也称为 ES11）中被添加到 JavaScript 语言中。该运算符用于为可能是 null 或 undefined 的变量提供一个默认值。
+
+#### 语法
+
+```js
+let result = value1 ?? defaultValue;
+```
+
+- value1 是要检查的值。
+- defaultValue 是当 value1 是 null 或 undefined 时要返回的默认值。
+
+#### 示例
+
+```js
+// 当变量为null时使用默认值
+let a = null ?? 'default value'; // 结果为'default value'
+
+// 当变量为undefined时使用默认值
+let b = undefined ?? 'default value'; // 结果为'default value'
+
+// 当变量有实际值（即非null/非undefined）时
+let c = 'actual value' ?? 'default value'; // 结果为'actual value'
+
+// 当变量为其他falsy值（如0或''）时，不会使用默认值
+let d = 0 ?? 'default value'; // 结果为0
+let e = '' ?? 'default value'; // 结果为''
+```
+
+#### 注意事项
+
+- Nullish coalescing operator 与逻辑 OR 运算符(||)不同，后者在左侧操作数为任何 false 值（如 0、''、false、null、undefined、NaN）时返回右侧操作数。
+- ??仅在左侧操作数为 null 或 undefined 时返回右侧操作数，这使得它在为变量设置默认值时更加精确。
+- ??不能与||或&&运算符直接混合使用，因为这会引起语法错误。如果需要混合使用，应该使用括号来明确运算符的优先级。
+
+  ```js
+  // 错误的混合使用，会引发语法错误
+  // let f = null || undefined ?? 'default value'; // SyntaxError
+
+  // 正确的混合使用
+  let g = (null || undefined) ?? 'default value'; // 结果为'default value'
+  ```
+
+### Optional Chaining (?.)
+
+#### 概述
+
+Optional Chaining (?.) 是一个在 JavaScript 中用于访问对象属性的运算符，它在 ES2020（也称为 ES11）中被引入。这个运算符可以在尝试访问一个对象的嵌套子属性时，不需要显式地验证每一层属性是否存在。
+
+#### 语法
+
+```js
+let value = object?.property;
+let value = object?.[expression];
+let value = array?.[index];
+let methodValue = object?.method(args);
+```
+
+- object 是要访问其属性的对象。
+- property 是对象中我们想要安全访问的属性。
+- expression 是计算属性名时使用的表达式。
+- index 是数组中我们想要安全访问的索引。
+- method 是对象中我们想要安全调用的方法。
+
+#### 示例
+
+```js
+const user = {
+  name: 'John',
+  address: {
+    street: 'Main St',
+    city: 'New York',
+  },
+};
+
+// 访问嵌套属性时不会抛出错误
+let street = user.address?.street; // 结果为'Main St'
+let zipcode = user.address?.zipcode; // 结果为undefined，因为zipcode不存在
+
+// 在数组中使用
+let firstItem = [1, 2, 3]?.[0]; // 结果为1
+let tenthItem = [1, 2, 3]?.[9]; // 结果为undefined，因为索引9不存在
+
+// 在方法调用中使用
+let length = user.getName?.(); // 结果为undefined，因为getName方法不存在
+```
+
+#### 注意事项
+
+- 如果在?.之前的属性是 null 或 undefined，表达式的运算结果会立即返回 undefined，而不会继续访问后面的属性。
+- Optional Chaining 只能用来访问属性或调用方法，不能用来赋值或作为左值使用。
+- 使用 Optional Chaining 时，不能用来判断一个属性是否存在，因为无论属性是否存在，如果前面的对象是 null 或 undefined，都会返回 undefined。
+
+  ```js
+  // 错误的使用方式，不能用于赋值
+  // user.address?.street = '123 Maple St'; // SyntaxError
+
+  // 判断属性是否存在
+  let hasStreet = 'street' in user.address; // 结果为true
+  ```
