@@ -192,6 +192,185 @@ CSS 定位是布局中的一个重要概念，它决定了一个元素在页面�
 - **Grid**: 使用 display: grid 实现网格布局，包括 grid-template-columns, grid-template-rows, grid-gap, grid-area 等属性。
 - **多列布局**: 利用 column-count, column-gap, column-rule 等属性创建多列文本流。
 
+### Flexbox 属性
+
+Flexbox（Flexible Box）布局提供了一种更加有效的方式来布局、对齐和分配容器内项目的空间，即使它们的大小未知或是动态变化的。
+
+#### 容器属性（Flex Container）
+
+display
+
+- 属性值: flex | inline-flex
+- 使用场景: 用于定义一个 Flex 容器。
+
+flex-direction
+
+- 属性值: row | row-reverse | column | column-reverse
+  - row：**默认值**。子元素将水平排列，起始点为容器的起始边缘。
+  - row-reverse：子元素将水平排列，起始点为容器的结束边缘，顺序被反转。
+  - column：子元素将垂直排列，起始点为容器的起始边缘。
+  - column-reverse：子元素将垂直排列，起始点为容器的结束边缘，顺序被反转。
+- 使用场景: 用于定义项目的排列方向。
+
+flex-wrap
+
+- 属性值: nowrap | wrap | wrap-reverse
+  - nowrap：默认值。flex 项不会换行，即使它们溢出了容器，也会被压缩在一行内。
+  - wrap：flex 项会在必要时换行。第一行在容器的顶部，新的一行堆叠在下面。
+  - wrap-reverse：flex 项会在必要时换行，但是它们的顺序是相反的：第一行在容器的底部，新的一行堆叠在上面。
+- 使用场景: 当项目溢出容器时，用于定义是否换行。
+
+justify-content
+
+- 属性值: flex-start | flex-end | center | space-between | space-around | space-evenly
+  - flex-start：flex 项被挤到行的起始位置。
+  - flex-end：flex 项被挤到行的结束位置。
+  - center：flex 项在行中居中对齐。
+  - space-between：flex 项平均分布在行里，第一个项在起始位置，最后一个在结束位置，其它项分布在它们之间。
+  - space-around：flex 项平均分布在行里，但所有项两侧都有相同的空间。这意味着项之间的空间是项与容器边缘空间的两倍。
+  - space-evenly：flex 项平均分布在行里，所有项之间的空间以及与容器边缘的空间都相等。
+- 使用场景: 定义项目在主轴上的对齐方式。
+
+align-items
+
+- 属性值: stretch | flex-start | flex-end | center | baseline
+  - stretch：默认值。flex 项被拉伸以填满容器的交叉轴，但仍然遵循 min-width/min-height 和 max-width/max-height 的限制。
+  - flex-start：flex 项沿着交叉轴的起始位置对齐。
+  - flex-end：flex 项沿着交叉轴的结束位置对齐。
+  - center：flex 项在交叉轴方向居中对齐。
+  - baseline：flex 项根据它们的基线对齐。基线是指文本基线，即文本所在的虚拟线。
+- 使用场景: 定义项目在交叉轴上如何对齐。
+
+#### 项目属性（Flex Item）
+
+flex-grow
+
+- 属性值: \<number\> (默认值为 0)
+  - 0：flex 项不会放大。这是默认值。
+  - 正数：该值表示放大比例。如果所有 flex 项的 flex-grow 属性都设置为 1，则它们将等分剩余空间。如果一个 flex 项的 flex-grow 属性值大于 1，那么这个项将占据比其它项更多的剩余空间。
+- 使用场景: 定义项目的放大比例。
+
+flex-shrink
+
+- 属性值: \<number\> (默认值为 1)
+  - 1：flex 项将会缩小以适应容器空间。这是默认值。
+  - 0：flex 项不会缩小，即使容器空间不足。
+  - 正数：该值表示缩小的比例。如果所有 flex 项的 flex-shrink 属性都设置为 1，则它们将等比例缩小。如果一个 flex 项的 flex-shrink 属性值大于 1，则这个项将缩小得比其它项更多。
+- 使用场景: 定义项目的缩小比例。
+
+flex-basis
+
+- 属性值: \<length\> | \<percentage\> | auto (默认值为 auto)
+  - auto：flex 项的大小根据它的宽度或高度（取决于主轴方向）来确定。这是默认值。
+  - 长度值：可以指定一个长度值（如 px, em, %等），来设置 flex 项的初始大小。
+  - 0：将 flex 项的初始大小设置为 0，然后根据 flex-grow 属性进行调整。
+- 使用场景: 定义项目在分配多余空间之前的默认大小。
+
+flex
+
+- 属性值: none | \<flex-grow\> \<flex-shrink\> \<flex-basis\>
+- 使用场景: flex 是 flex-grow, flex-shrink 和 flex-basis 的简写，默认值为 0 1 auto。
+
+align-self
+
+- 属性值: auto | flex-start | flex-end | center | baseline | stretch
+  - auto：flex 项的对齐方式继承自容器的 align-items 属性。这是默认值
+  - stretch：flex 项被拉伸填满交叉轴的整个高度，除非设置了明确的高度或宽度。
+  - flex-start：flex 项沿交叉轴的起始边对齐。
+  - flex-end：flex 项沿交叉轴的结束边对齐。
+  - center：flex 项在交叉轴上居中对齐。
+  - baseline：flex 项根据它们的基线对齐。
+- 使用场景: 允许单个项目与其他项目不同的对齐方式。
+
+### Grid 属性
+
+CSS Grid Layout（网格布局）是一个二维布局系统，它可以处理列和行，下面是 Grid 布局中常用的属性。
+
+#### 容器属性（Grid Container）
+
+grid-template-columns 和 grid-template-rows
+
+- 属性值: \<track-size\> | \<line-name\> | repeat() | auto-fill | auto-fit
+  - \<track-size\>：可以是长度、百分比或者fr单位的值，定义网格轨道的大小。
+  - \<line-name\>：可以为网格线指定一个名字，方便后续引用。
+  - repeat(\<number\>, \<track-size\>)：重复生成指定数量的轨道，轨道大小由\<track-size\>定义。
+  - auto-fill：自动填充轨道，直到容器不能放置更多的轨道。
+  - auto-fit：类似auto-fill，但是会收缩空闲的轨道。
+- 使用场景: 用于定义网格的列和行的大小。可以设置固定尺寸（如 px, em, %），也可以使用 fr 单位表示比例关系。repeat()函数用于重复相同大小的轨道，auto-fill 和 auto-fit 用于自动填充网格容器。
+
+grid-template-areas
+
+- 属性值: \<grid-area-name\> | . | none
+  - \<grid-area-name\>：指定一个区域的名称，用于布局。
+  - .：表示一个空单元格。
+  - none：没有定义网格区域。
+- 使用场景: 通过引用 grid-area 属性所命名的区域来定义网格模板。可以创建复杂的布局模式，并且使布局易于理解。
+
+grid-column-gap 和 grid-row-gap（已更新为 column-gap 和 row-gap）
+
+- 属性值: \<length\>
+  - \<length\>：设置网格线之间的间隙。
+- 使用场景: 设置网格线之间的间隙。这可以用于在网格项之间添加空间，而无需在网格项本身上添加边距。
+
+grid-gap（已更新为 gap）
+
+- 属性值: \<grid-row-gap\> \<grid-column-gap\>
+- 使用场景: 同时设置行和列间隙的简写形式。
+
+justify-items 和 align-items
+
+- 属性值: start | end | center | stretch
+  - start：将网格项对齐到其所在列的起始边缘。
+  - end：将网格项对齐到其所在列的末尾边缘。
+  - center：将网格项对齐到其所在列的中心。
+  - stretch：拉伸网格项以填满列宽。
+- 使用场景: 控制网格项在网格区域内沿着行（水平）和列（垂直）的对齐方式。
+  justify-content 和 align-content
+- 属性值: start | end | center | stretch | space-around | space-between | space-evenly
+- 使用场景: 当网格容器比其网格大时，用于对齐整个网格内容。
+
+grid-auto-columns 和 grid-auto-rows
+
+- 属性值: \<auto-track-size\>
+  - auto：自动大小。
+  - \<length\>：固定大小。
+  - min-content：内容的最小大小。
+  - max-content：内容的最大大小。
+  - minmax(min, max)：介于最小值和最大值之间的尺寸。
+- 使用场景: 为隐式网格（即未通过 grid-template-rows 或 grid-template-columns 显式定义的行或列）设置大小。
+
+grid-auto-flow
+
+- 属性值: row | column | dense
+  - auto：自动大小。
+  - \<length\>：固定大小。
+  - min-content：内容的最小大小。
+  - max-content：内容的最大大小。
+  - minmax(min, max)：介于最小值和最大值之间的尺寸。
+- 使用场景: 控制自动放置网格项的算法，即如何填充网格自动创建的额外行或列。
+
+#### 项目属性（Grid Item）
+
+grid-column-start, grid-column-end, grid-row-start 和 grid-row-end
+
+- 属性值: \<line\> | \<span\> | auto
+- 使用场景: 定义网格项的位置和跨越的网格线。可以用来精确地放置网格项。
+
+grid-column 和 grid-row
+
+- 属性值: \<start-line\> / \<end-line\>
+- 使用场景: grid-column 和 grid-row 是 grid-column-start/grid-column-end 和 grid-row-start/grid-row-end 的简写形式，用于定义网格项如何跨越行或列。
+
+grid-area
+
+- 属性值: \<name\> | \<row-start\> / \<column-start\> / \<row-end\> / \<column-end\>
+- 使用场景: 既可以用来为网格项命名，以便在 grid-template-areas 中引用，也可以定义网格项的位置和大小。
+
+justify-self 和 align-self
+
+- 属性值: start | end | center | stretch
+- 使用场景: 控制单个网格项在其网格区域内沿行（水平）和列（垂直）的对齐方式。
+
 ## CSS 视觉效果
 
 - **盒阴影**: box-shadow 为元素添加阴影效果。
