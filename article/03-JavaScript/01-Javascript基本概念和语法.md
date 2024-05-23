@@ -696,13 +696,13 @@ const bigIntValueUnsigned = BigInt.asUintN(32, BigInt(maxUint32) + 1n);
 - 不是所有的 JavaScript 环境都支持 BigInt，特别是在一些旧的浏览器或 JavaScript 环境中可能不可用。
 - 在进行位运算时，BigInt 的行为与 Number 不同，因为 BigInt 可以表示任意大小的整数。
 
-### globalThis
+## globalThis
 
-#### 概述
+### 概述
 
 globalThis 提供了一个标准的方式来获取不同 JavaScript 环境中的全局对象。在不同的环境中，全局对象可能有不同的名字。例如，在浏览器环境中，全局对象通常是 window，在 Node.js 中是 global，在 Web Workers 中是 self。globalThis 旨在提供一个统一的、环境无关的方式来访问这个全局对象。
 
-#### 使用 globalThis
+### 使用 globalThis
 
 globalThis 的主要用途是提供一个可靠的方法来访问全局作用域内的属性和方法，无论代码运行在什么环境中。
 
@@ -714,7 +714,7 @@ globalThis.myGlobalVar = 'Hello, world!';
 console.log(globalThis.myGlobalVar); // 输出: Hello, world!
 ```
 
-#### 兼容性
+### 兼容性
 
 globalThis 是在 ECMAScript 2020 规范中引入的。大多数现代浏览器和 JavaScript 环境已经实现了这个特性。但是，在一些旧的浏览器或者 JavaScript 环境中可能还不支持 globalThis。为了确保兼容性，可以使用以下的 polyfill：
 
@@ -731,12 +731,14 @@ if (typeof globalThis === 'undefined') {
 }
 ```
 
-#### 注意事项
+### 注意事项
 
 - 使用 globalThis 时，应该注意不要无意中覆盖全局作用域中的重要变量。
 - 在模块化的代码中，应避免在全局作用域中添加变量或方法，而应该使用模块导出和导入来共享功能。
 - 在严格模式下，this 在全局作用域中不会指向全局对象，而 globalThis 始终会指向全局对象。
 - 虽然 globalThis 提供了一个标准的方法来访问全局对象，但是仍然推荐尽可能地使用局部变量和模块作用域，以避免潜在的命名冲突和代码维护问题。
+
+## 操作运算符
 
 ### 指数运算符
 
