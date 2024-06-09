@@ -1,18 +1,5 @@
 # 基本概念和语法
 
-- 变量和数据类型: 使用 var、let、const 声明变量；了解基本数据类型（字符串、数字、布尔值等）和复合数据类型（对象、数组）。
-- Symbol：一种全新的原始数据类型，表示独一无二的值。
-- Symbol.prototype.description: 允许读取 Symbol 的描述。
-- BigInt: 一种新的数字类型，可以表示非常大的整数。
-- globalThis: 提供了一个标准的方式来获取不同环境下的全局 this 对象。
-- 操作符: 算术、逻辑、比较、位运算、赋值、字符串拼接等。
-- 指数运算符\*\*: 新的运算符用于计算幂运算。
-- Nullish coalescing Operator (??): 一种逻辑运算符，当左侧的操作数为 null 或 undefined 时，返回其右侧操作数。
-- Optional Chaining (?.): 允许你在访问对象属性时不必检查每级属性是否存在。
-- 控制结构: if-else、switch、for、while、do-while、for-in、for-of。
-- for-in mechanics: for-in 循环现在有了明确的枚举顺序。
-- 函数: 函数声明、函数表达式、箭头函数、回调函数、立即执行函数表达式（IIFE）。
-- 作用域和闭包: 理解全局作用域、局部作用域、块级作用域以及闭包的概念。
 - 对象和原型: 对象字面量、构造函数、原型链、继承、Object 类的方法。
 - 数组和迭代方法: 数组的创建和操作，以及 map、filter、reduce 等迭代方法。
 - 字符串和正则表达式: 字符串处理方法和正则表达式的使用。
@@ -39,7 +26,7 @@
 - Ergonomic brand checks for Private Fields: 提供了一种更简洁的方式来检查一个对象是否包含某个私有字段。
 - Temporal API: 提供了一套新的 API 用于处理日期和时间。
 
-## 变量和数据类型
+## 变量
 
 ### var、let、const 使用场景与注意事项
 
@@ -140,6 +127,8 @@ console.log(myConst); // 输出：const cannot be accessed before declaration
 ```
 
 在上面的代码中，尝试在声明之前访问 myLet 和 myConst 都会导致 ReferenceError，因为它们还处于各自的暂时性死区中。而 var 声明的变量由于变量提升，可以在声明前访问，但是值为 undefined。这个例子说明了 TDZ 的概念以及它是如何工作的。
+
+## 数据类型
 
 ### js 的基础数据类型和复合数据类型分别是什么？
 
@@ -740,13 +729,13 @@ if (typeof globalThis === 'undefined') {
 
 ## 操作运算符
 
-### 指数运算符
+### 1 指数运算符
 
-#### 概述
+#### 1.1 概述
 
 JavaScript 的指数运算符是\*\*，用于执行指数（幂）计算。它在 ES2016（也称为 ES7）中被引入 JavaScript 语言规范。
 
-#### 语法
+#### 1.2 语法
 
 ```js
 let result = base ** exponent;
@@ -755,7 +744,7 @@ let result = base ** exponent;
 - base 是底数。
 - exponent 是指数。
 
-#### 示例
+#### 1.3 示例
 
 ```js
 // 2的3次方
@@ -772,7 +761,7 @@ let d = 2 ** (3 ** 2); // 结果为512, 因为先计算3的2次方得到9，然�
 let e = (2 ** 3) ** 2; // 结果为64, 因为先计算2的3次方得到8，然后计算8的2次方
 ```
 
-#### 注意事项
+#### 1.4 注意事项
 
 - 指数运算符具有右结合性，意味着在没有括号的情况下，它会从右到左计算。
 - 可以使用 Math.pow()函数来获得相同的结果，这在不支持指数运算符的旧版 JavaScript 环境中尤其有用。
@@ -797,13 +786,13 @@ let e = (2 ** 3) ** 2; // 结果为64, 因为先计算2的3次方得到8，然�
   h **= 2; // 现在h的值为9 (等同于h = h ** 2)
   ```
 
-### Nullish Coalescing Operator (??)
+### 2 Nullish Coalescing Operator (??)
 
-#### 概述
+#### 2.1 概述
 
 Nullish coalescing operator (??) [**非空合并运算符**]是一个逻辑运算符，它在 ES2020（也称为 ES11）中被添加到 JavaScript 语言中。该运算符用于为可能是 null 或 undefined 的变量提供一个默认值。
 
-#### 语法
+#### 2.2 语法
 
 ```js
 let result = value1 ?? defaultValue;
@@ -812,7 +801,7 @@ let result = value1 ?? defaultValue;
 - value1 是要检查的值。
 - defaultValue 是当 value1 是 null 或 undefined 时要返回的默认值。
 
-#### 示例
+#### 2.3 示例
 
 ```js
 // 当变量为null时使用默认值
@@ -829,7 +818,7 @@ let d = 0 ?? 'default value'; // 结果为0
 let e = '' ?? 'default value'; // 结果为''
 ```
 
-#### 注意事项
+#### 2.4 注意事项
 
 - Nullish coalescing operator 与逻辑 OR 运算符(||)不同，后者在左侧操作数为任何 false 值（如 0、''、false、null、undefined、NaN）时返回右侧操作数。
 - ??仅在左侧操作数为 null 或 undefined 时返回右侧操作数，这使得它在为变量设置默认值时更加精确。
@@ -843,13 +832,13 @@ let e = '' ?? 'default value'; // 结果为''
   let g = (null || undefined) ?? 'default value'; // 结果为'default value'
   ```
 
-### Optional Chaining (?.)
+### 3 Optional Chaining (?.)
 
-#### 概述
+#### 3.1 概述
 
 Optional Chaining (?.) [**可选链**]是一个在 JavaScript 中用于访问对象属性的运算符，它在 ES2020（也称为 ES11）中被引入。这个运算符可以在尝试访问一个对象的嵌套子属性时，不需要显式地验证每一层属性是否存在。
 
-#### 语法
+#### 3.2 语法
 
 ```js
 let value = object?.property;
@@ -864,7 +853,7 @@ let methodValue = object?.method(args);
 - index 是数组中我们想要安全访问的索引。
 - method 是对象中我们想要安全调用的方法。
 
-#### 示例
+#### 3.3 示例
 
 ```js
 const user = {
@@ -887,7 +876,7 @@ let tenthItem = [1, 2, 3]?.[9]; // 结果为undefined，因为索引9不存在
 let length = user.getName?.(); // 结果为undefined，因为getName方法不存在
 ```
 
-#### 注意事项
+#### 3.4 注意事项
 
 - 如果在?.之前的属性是 null 或 undefined，表达式的运算结果会立即返回 undefined，而不会继续访问后面的属性。
 - Optional Chaining 只能用来访问属性或调用方法，不能用来赋值或作为左值使用。
@@ -900,3 +889,711 @@ let length = user.getName?.(); // 结果为undefined，因为getName方法不存
   // 判断属性是否存在
   let hasStreet = 'street' in user.address; // 结果为true
   ```
+
+## 循环语法
+
+### 1 for-in
+
+#### 1.1 使用场景
+
+- 遍历对象属性：当你需要遍历一个对象的所有可枚举属性时，for-in 是一个方便的选择。
+- 调试和检查对象：在调试时，你可能需要检查一个对象中有哪些属性和方法，for-in 可以帮助你快速查看。
+- 动态属性：对于属性名未知或动态添加到对象的属性，for-in 可以动态地遍历这些属性。
+
+#### 1.2 语法示例
+
+```js
+for (variable in object) {
+  // 代码块
+}
+```
+
+variable 是每次迭代分配属性名的变量，而 object 是要迭代其可枚举属性的对象。
+
+```js
+const person = { name: 'Alice', age: 25, city: 'Paris' };
+
+for (let key in person) {
+  console.log(key + ': ' + person[key]);
+}
+```
+
+输出:
+
+```shell
+name: Alice
+age: 25
+city: Paris
+```
+
+#### 1.3 注意事项
+
+1. 原型链属性：for-in 会遍历对象自身的属性以及原型链上的可枚举属性。使用 Object.hasOwnProperty() 可以过滤非对象自身的属性。
+2. 数组遍历：不推荐使用 for-in 遍历数组，因为它会遍历数组所有可枚举属性，包括原型链上的属性，而不仅仅是数组元素。
+3. 顺序不保证：for-in 循环遍历属性的顺序在不同的 JavaScript 引擎中可能不一致，且不一定按照对象属性的创建顺序。
+4. 性能问题：for-in 循环可能比其他类型的循环（如 for、forEach、for-of）慢，尤其是在遍历大对象时。
+5. 避免在高性能需求场景中使用：如果代码性能至关重要，考虑使用其他循环方法。
+6. 枚举性检查：在使用 for-in 循环之前，了解对象的可枚举属性是很重要的，以避免遍历到不需要的属性。
+7. 避免在对象原型上添加属性：如果你在对象原型上添加属性，这些属性也会被 for-in 遍历到，除非你使用 Object.defineProperty() 将它们定义为不可枚举的。
+
+   ```js
+   for (let key in person) {
+     if (person.hasOwnProperty(key)) {
+       console.log(key + ': ' + person[key]);
+     }
+   }
+   ```
+
+#### 1.4 for-in 循环的性能为什么不如 for 循环
+
+1. 枚举属性的机制：for-in 循环需要枚举对象的所有可枚举属性，包括继承自原型链的属性。这个过程比简单地迭代一个数组的索引（如在 for 循环中）要复杂和耗时。
+2. 字符串键的处理：在 for-in 循环中，对象的键作为字符串处理，这意味着 JavaScript 引擎需要管理字符串与属性之间的映射，这是一个比直接使用数值索引（如数组索引）更耗时的操作。
+3. 动态查找：每次迭代时，for-in 循环都必须动态查找对象的下一个属性，这涉及到查找属性的过程，可能包括在原型链上搜索，而 for 循环通常是预先知道迭代次数和使用数值索引的。
+4. 非连续性质：数组中可能存在非连续的元素，或者数组本身就是稀疏的，for-in 循环会跳过那些未定义的索引，这种跳过检查也会增加额外的开销。
+5. 优化难度：JavaScript 引擎往往对常见的 for 循环进行了优化，因为它们的行为是可预测的。然而，由于 for-in 循环的动态特性，引擎更难对其进行优化。
+6. 不确定的属性顺序：由于 for-in 循环不保证属性的遍历顺序，引擎可能需要采取额外的措施来维护属性的某种顺序，这可能导致性能开销。
+
+### 2 for-of 循环
+
+#### 2.1 使用场景
+
+1. 数组迭代：遍历数组元素时，比传统 for 循环更简洁。
+2. 字符串迭代：遍历字符串中的每个字符。
+3. Map/Set 迭代：直接遍历 Map 和 Set 集合中的元素。
+4. 类数组对象：如 arguments 或 NodeList，可以用 for-of 进行遍历。
+5. 自定义迭代器：对于实现了迭代器协议的自定义对象。
+
+#### 2.2 语法示例
+
+语法结构
+
+```js
+for (variable of iterable) {
+  // code block to be executed
+}
+```
+
+- variable：在每次迭代中，由 iterable 集合中的每个不同属性值赋值的变量。
+- iterable：一个可迭代的对象，如 Array, Map, Set, String, TypedArray, arguments 对象等。
+
+数组遍历
+
+```js
+let array = [10, 20, 30, 40];
+
+for (let value of array) {
+  console.log(value); // 输出: 10, 20, 30, 40
+}
+```
+
+字符串遍历
+
+```js
+let string = 'hello';
+
+for (let character of string) {
+  console.log(character); // 输出: 'h', 'e', 'l', 'l', 'o'
+}
+```
+
+Map 遍历
+
+```js
+let map = new Map([
+  ['a', 1],
+  ['b', 2],
+  ['c', 3],
+]);
+
+for (let [key, value] of map) {
+  console.log(`${key}: ${value}`); // 输出: 'a: 1', 'b: 2', 'c: 3'
+}
+```
+
+Set 遍历
+
+```js
+let set = new Set([1, 2, 3]);
+
+for (let value of set) {
+  console.log(value); // 输出: 1, 2, 3
+}
+```
+
+#### 2.3 注意事项
+
+1. 不适用于普通对象：for-of 不能直接用于普通对象的遍历，因为对象不是迭代器
+2. 不能获取索引：在迭代数组时，for-of 不提供索引，如果需要索引，可能需要使用 for 循环或 forEach 方法。
+3. 中断迭代：可以使用 break, continue, return 或 throw 控制迭代流程。
+4. 兼容性：for-of 在 ES6（ECMAScript 2015）中引入，不支持 ES6 的旧环境可能无法使用。
+5. 性能：虽然 for-of 提供了更简洁的语法，但在某些情况下（特别是在旧的 JavaScript 引擎中），它可能不如传统的 for 循环高效。
+
+## 函数
+
+### 函数声明和函数表达式的区别
+
+#### 1. 提升（Hoisting）
+
+函数声明会被提升，这意味着在代码执行之前，函数声明会被提前到作用域顶部。
+
+```js
+// 函数声明
+console.log(declaredFunction()); // 输出: "This is a function declaration"
+function declaredFunction() {
+  return 'This is a function declaration';
+}
+```
+
+函数表达式不会被提升，必须在定义之后才能使用。
+
+```js
+// 函数表达式
+console.log(expressionFunction); // 输出: undefined
+console.log(expressionFunction()); // TypeError: expressionFunction is not a function
+
+var expressionFunction = function () {
+  return 'This is a function expression';
+};
+```
+
+#### 2. 作用域
+
+函数声明的作用域是其所在的函数或全局作用域。
+函数表达式的作用域是其定义的位置。
+
+#### 3. 匿名和命名
+
+函数表达式可以是匿名的，也可以是命名的。
+
+```js
+// 匿名函数表达式
+var anonymousFunction = function () {
+  return 'This is an anonymous function expression';
+};
+
+// 命名函数表达式
+var namedFunction = function namedFunctionExpr() {
+  return 'This is a named function expression';
+};
+```
+
+函数声明则必须有名称。
+
+```js
+function declaredFunction() {
+  return 'This is a function declaration';
+}
+```
+
+#### 4. 可读性和表达
+
+函数声明通常在代码的顶部，这有助于提高可读性，因为它们描述了可用的函数。
+函数表达式可以在代码中的任何位置创建，这允许更动态的使用方式，比如作为参数传递给其他函数。
+
+#### 5. 作为值使用
+
+函数表达式可以立即执行（IIFE），或者作为其他函数的参数。
+
+```js
+// IIFE（立即调用函数表达式）
+(function () {
+  console.log('This function runs right away');
+})();
+
+// 作为参数传递
+setTimeout(function () {
+  console.log('This function runs after 1 second');
+}, 1000);
+```
+
+函数声明则不常用于这些场合，通常是定义后多次调用。
+
+### 立即调用函数表达式（IIFE）
+
+#### IIFE 使用场景
+
+1. 创建私有作用域
+   在 JavaScript 中，变量如果不是在函数内部声明的，那么就会成为全局变量。通过使用 IIFE，可以避免变量污染全局作用域。
+
+   ```js
+   (function () {
+     var localVar = "I'm private";
+     // localVar 在这个函数外部是无法访问的
+   })();
+   ```
+
+2. 避免命名冲突
+   当引入多个库或框架时，可能会出现命名冲突。IIFE 可以帮助隔离各自的变量和函数，防止冲突。
+
+   ```js
+   (function ($) {
+     // 使用 $ 作为 jQuery 的别名，避免与其他库冲突
+     $('#my-element').addClass('highlight');
+   })(jQuery);
+   ```
+
+3. 模块化代码
+   在模块化开发中，IIFE 可以用来模拟模块作用域，封装模块的公共接口和私有变量。
+
+```js
+var myModule = (function () {
+  var privateVar = "I'm private";
+
+  return {
+    publicMethod: function () {
+      console.log(privateVar);
+    },
+  };
+})();
+
+myModule.publicMethod(); // 访问公共方法，而不暴露私有变量
+```
+
+4. 立即执行初始化代码
+   IIFE 可用于立即执行初始化代码，而不必等待事件或者回调。
+
+```js
+(function () {
+  // 初始化代码
+  console.log('Initialization logic executed immediately');
+})();
+```
+
+#### IIFE 注意事项
+
+1. 括号的使用
+   IIFE 需要被包围在括号内，以表明它是一个函数表达式，否则会被解释为一个函数声明，从而导致语法错误。
+
+   ```js
+   (function() {
+     // 代码
+   })(); // 正确的 IIFE
+
+   function() {
+     // 代码
+   }(); // 错误的 IIFE，会导致语法错误
+   ```
+
+2. 传递参数
+   当调用 IIFE 时，可以传递参数进去。这在需要将外部变量传入 IIFE 时非常有用。
+
+   ```js
+   (function (global) {
+     // 代码可以访问全局对象，而不直接使用 window 或 global
+   })(this);
+   ```
+
+3. 返回值
+   IIFE 可以有返回值，这个返回值可以被赋值给一个变量。
+
+```js
+var result = (function () {
+  return 'Hello from IIFE';
+})();
+console.log(result); // 输出: Hello from IIFE
+```
+
+4. 代码风格
+   在团队开发中，应该遵守统一的代码风格，关于 IIFE 的使用也不例外。保持一致的风格有助于代码的可读性和维护性。
+5. 性能考虑
+   虽然 IIFE 提供了很多好处，但在某些性能敏感的场景下应谨慎使用，因为每次 IIFE 的调用都可能产生函数调用的开销。在现代 JavaScript 模块系统（如 ES6 模块）的支持下，IIFE 的使用已经不如以前那么普遍了。
+
+### 箭头函数与普通函数的区别
+
+#### 1. 语法简洁
+
+箭头函数提供了更简洁的函数写法。
+
+```js
+// 普通函数
+function add(a, b) {
+  return a + b;
+}
+
+// 箭头函数
+const add = (a, b) => a + b;
+```
+
+#### 2. this 绑定
+
+箭头函数不绑定自己的 this，它会捕获其所在上下文的 this 值作为自己的 this 值。
+
+```js
+// 普通函数
+function Person() {
+  this.age = 0;
+
+  setInterval(function growUp() {
+    this.age++;
+  }, 1000);
+}
+
+// 箭头函数
+function Person() {
+  this.age = 0;
+
+  setInterval(() => {
+    this.age++;
+  }, 1000);
+}
+```
+
+在普通函数中，this 是动态绑定的，而箭头函数则会继承父作用域的 this。
+
+#### 3. 没有 arguments 对象
+
+箭头函数没有自己的 arguments 对象，不能直接访问参数列表的类数组对象，但可以通过剩余参数 ... 来访问。
+
+```js
+// 普通函数
+function showArguments() {
+  console.log(arguments);
+}
+
+// 箭头函数
+const showArguments = (...args) => {
+  console.log(args);
+};
+```
+
+#### 4. 不能作为构造函数
+
+箭头函数不能使用 new 关键字，因为它没有自己的 this，也没有 prototype 属性，所以不能作为构造函数。
+
+```js
+// 普通函数
+function Person(name) {
+  this.name = name;
+}
+const person = new Person('John');
+
+// 箭头函数
+const Person = (name) => {
+  this.name = name;
+};
+// const person = new Person('John'); // TypeError: Person is not a constructor
+```
+
+#### 没有 prototype 属性
+
+箭头函数没有 prototype 属性，而普通函数有。
+
+```js
+// 普通函数
+function myFunction() {}
+console.log(myFunction.prototype); // 输出: {constructor: ...}
+
+// 箭头函数
+const myArrowFunction = () => {};
+console.log(myArrowFunction.prototype); // 输出: undefined
+```
+
+#### 6. 不能作为 Generator 函数
+
+由于语法设计、this 绑定行为以及 yield 关键字的使用等方面的差异，箭头函数不能用作 Generator 函数。在需要使用 Generator 函数的场景中，应该使用传统的 function\* 语法来定义。
+
+1. 语法差异
+   箭头函数是 ES6 引入的一个新的函数语法，它主要用于创建匿名函数，并且拥有更短的函数写法和词法作用域绑定。而 Generator 函数是一种可以暂停执行和恢复执行的函数，它的语法是在 function 关键字后面添加一个星号（\*）来表示。
+
+```js
+// 普通函数
+function regularFunction() {
+  // ...
+}
+
+// 箭头函数
+const arrowFunction = () => {
+  // ...
+};
+
+// Generator 函数
+function* generatorFunction() {
+  // ...
+}
+```
+
+由于箭头函数的语法设计没有预留位置放置 \* 符号，因此无法通过箭头函数的写法来定义 Generator 函数。
+
+2. this 绑定行为
+   箭头函数不绑定自己的 this 值，而是继承自父作用域的 this。Generator 函数，作为一种特殊的函数，经常需要根据函数内部的状态管理来控制 this 值，这种行为与箭头函数的设计初衷相违背。
+
+```js
+const object = {
+  regularFunction: function* () {
+    yield this; // 正确地引用了 object
+  },
+  arrowFunction: () => {
+    // 不能用作 Generator 函数，也不能使用 yield 关键字
+  },
+};
+```
+
+3. yield 关键字的使用
+   箭头函数内部不能使用 yield 关键字，因为 yield 是 Generator 函数的专属语法。箭头函数试图使用 yield 会导致语法错误。
+
+```js
+const arrowFunction = () => {
+  // yield 'value'; // 语法错误，箭头函数内不能使用 yield
+};
+```
+
+4. 设计哲学
+   箭头函数的设计哲学是为了简化函数定义和保留词法作用域的 this 值，而 Generator 函数的设计是为了控制函数的执行过程，两者的目的和使用场景不同。因此，ES6 的设计者没有为箭头函数添加 Generator 函数的能力。
+
+### 箭头函数的 this 来源
+
+头函数的 this 值来源于它所在的上下文环境，它没有自己的 this 绑定。当一个箭头函数被定义时，它的 this 被永久性地捕获了它所在外围作用域的 this 值。这种行为被称为 "Lexical Scoping"。
+
+```js
+const obj = {
+  method: function () {
+    return () => {
+      return this; // this 指向 obj
+    };
+  },
+};
+
+const arrowFunction = obj.method();
+console.log(arrowFunction() === obj); // 输出: true
+```
+
+在上面的例子中，arrowFunction 的 this 被捕获并固定为 obj.method 执行时的 this，即 obj 对象本身。这使得箭头函数在处理事件、定时器、异步操作等场景下非常有用，因为它们通常需要一个不变的 this 上下文
+
+## 作用域和闭包
+
+### 作用域
+
+#### 作用域的概念
+
+作用域是指程序中定义变量的区域，该位置决定了变量的可见性和生命周期。JavaScript 中主要有两种类型的作用域：
+
+全局作用域：在代码中任何地方都能访问到的变量。
+局部作用域：只能在定义它的函数或代码块中访问到的变量。
+
+#### 局部作用域的类型
+
+局部作用域分为以下两种：
+
+函数作用域：变量在整个函数中都是可见的，包括函数内部嵌套的函数。
+块级作用域（ES6 引入）：变量在声明它的一对花括号{}内是可见的，常见于 let 和 const 声明的变量。
+
+#### 作用域链
+
+作用域链是 JavaScript 中实现变量作用域和闭包的基础机制，它确保了代码在执行时对变量的有序访问，同时也是实现词法作用域规则的关键。在编写 JavaScript 代码时，理解和正确使用作用域链是非常重要的。
+
+##### 作用域链概念
+
+1. 定义
+   作用域链是指在 JavaScript 中，当代码在一个环境中执行时，会创建变量对象的一个作用域链，用于保证对执行环境有权访问的所有变量和函数的有序访问。
+
+2. 作用域链的构建
+   当执行流进入一个函数时，函数的环境就会被推入一个环境栈中。在函数执行过程中，会为函数创建一个作用域链，这个链条的前端是当前执行的代码所在环境的变量对象，如果这个函数是一个闭包，那么还会包含所有父级函数的变量对象，直到全局执行环境的变量对象。
+
+3. 词法作用域与作用域链
+   词法作用域意味着函数的执行依赖于变量的作用域，这个作用域是在函数定义的时候就决定了，而不是在函数调用的时候。因此，作用域链的结构也是在函数定义的时候就已经确定了。
+
+##### 作用域链的作用
+
+1. 变量访问
+   作用域链的存在使得函数在查找变量时，会首先从自己内部的变量对象开始查找，如果没有找到，就会从父级函数的变量对象中查找，依此类推，直到找到该变量或者到达全局环境。
+
+2. 保证执行环境的有序性
+   作用域链保证了执行环境中代码在访问变量和函数时的有序性，确保了内部环境可以访问所有外部环境的变量和函数，但外部环境不能访问内部环境的任何变量和函数。
+
+3. 实现闭包
+   闭包的实现依赖于作用域链。闭包中的内部函数能够访问外部函数的变量对象，是因为内部函数的作用域链包含了外部函数的变量对象。
+
+##### 作用域链的注意事项
+
+1. 性能考虑
+   在作用域链中查找变量时，查找过程会从作用域链的前端开始，逐级向上，直到找到变量为止。如果变量位于作用域链的较高层次中，那么查找的时间会更长，因此在编写代码时应尽量避免过长的作用域链。
+
+2. 内存泄漏
+   由于闭包会引用包含它的外部函数的作用域，因此如果闭包没有被及时释放，那么这个外部函数的作用域也不会被回收，可能会导致内存泄漏。
+
+#### 作用域注意事项
+
+1. 避免全局变量污染：过多的全局变量会导致命名冲突和数据不可控，应当尽量减少全局变量的使用。
+2. 使用立即执行函数表达式（IIFE）：创建一个新的作用域，避免变量污染全局作用域。
+3. 块级作用域：使用 let 和 const 代替 var 来声明变量，以获得块级作用域，避免变量提升导致的问题。
+4. 闭包的使用：理解闭包的作用域链特性，它可以访问定义时的环境，即使外部函数已经执行完毕。
+5. 作用域链性能：作用域链越长，变量查找的性能开销越大，应尽量避免深层嵌套的函数，以减少查找时间。
+6. 变量遮蔽：在嵌套的作用域中，内层作用域的变量可能会遮蔽外层作用域的变量，要注意命名冲突。
+7. 严格模式：使用"use strict"可以更严格地执行作用域规则，例如，不允许未声明的变量被赋值。
+
+### 闭包
+
+1. 闭包的定义
+   闭包是 JavaScript 中的一个概念，指的是一个函数和对其周围状态（即词法环境）的引用捆绑在一起形成的组合。这意味着闭包可以让你从内部函数访问外部函数的作用域。
+
+2. 创建闭包的条件
+   一个闭包的创建通常涉及到两个函数：一个是嵌套在另一个函数内部的内部函数（子函数），而另一个是外部函数（父函数）。当内部函数引用了外部函数的变量时，即使外部函数已经执行完毕，这些变量仍然可以被内部函数访问。
+
+3. 闭包的用途
+   闭包常用于以下几个方面：
+   - 维持函数内变量的状态：闭包可以在外部函数执行完毕后仍然保留其内部变量的状态，使得这些变量不会随着函数的执行完毕而消失。
+   - 封装私有变量：通过闭包可以创建私有变量，这些变量不能直接从外部访问，只能通过特定的函数访问和修改。
+   - 模拟私有方法：JavaScript 默认不支持私有方法，但可以通过闭包模拟实现。
+4. 闭包的例子
+
+   ```js
+   function createCounter() {
+     let count = 0;
+     return function () {
+       // 这个内部函数是一个闭包
+       count += 1;
+       return count;
+     };
+   }
+
+   const counter = createCounter();
+   console.log(counter()); // 输出：1
+   console.log(counter()); // 输出：2
+   ```
+
+   在这个例子中，createCounter 函数返回了一个匿名函数，这个匿名函数可以访问到 createCounter 函数作用域中的 count 变量。即使 createCounter 函数执行完毕，count 变量也不会消失，因为它被返回的匿名函数（闭包）引用着。
+
+### 闭包与作用域的关系
+
+1. 词法作用域
+   闭包的工作原理基于 JavaScript 的词法作用域规则：函数的作用域在函数定义时就决定了，而不是在函数调用时。
+
+2. 作用域链
+   每个闭包都有自己的作用域链，这个作用域链包含了闭包自身的作用域、包含它的外部函数的作用域，以及全局作用域。
+
+3. 访问外部变量
+   闭包可以访问并操作其外部函数作用域中的变量，即使外部函数已经执行完毕。这是因为闭包保存了外部函数作用域的引用。
+
+4. 内存考虑
+   由于闭包会保留它们所引用的外部函数作用域中的变量，因此如果不小心使用，可能会导致内存泄漏。因此，在不需要闭包时，应该及时释放这些闭包以释放内存。
+
+### 如何清理闭包，防止内存泄漏
+
+1. 了解闭包和内存泄漏
+   在防止内存泄漏之前，需要理解闭包是如何工作的，以及它们是如何导致内存泄漏的。闭包允许函数访问并操作外部函数的变量，即使外部函数已经执行完毕。如果闭包持续保持对这些变量的引用，它们将不会被垃圾回收，从而可能导致内存泄漏。
+
+2. 最小化闭包使用
+   避免不必要的闭包：仅在必要时创建闭包，如果可以用其他方式实现相同的功能，应考虑替代方案。
+   减少闭包大小：确保闭包只包含必要的变量和函数，这样可以减少它们对内存的占用。
+3. 显式释放资源
+   解除事件监听器：如果闭包被用作事件监听器，确保在不需要时移除事件监听器。
+   清空引用：如果闭包中的变量不再需要，可以将它们设置为 null 或者 undefined 来释放引用，这样垃圾回收器可以回收它们。
+4. 使用弱引用
+   WeakMap 和 WeakSet：在可能的情况下，使用 WeakMap 或 WeakSet 来存储对对象的引用，这些数据结构不会阻止垃圾回收器回收它们所引用的对象。
+5. 限制闭包生命周期
+   使用即时函数：通过立即执行的函数表达式（IIFE）限制闭包的生命周期，这样可以限制闭包作用域的持续时间。
+   模块模式：使用模块模式来封装私有变量，只暴露必要的公共接口，这样可以减少全局变量的使用，降低内存泄漏的风险。
+6. 工具和测试
+   内存分析工具：使用浏览器的开发者工具中的内存分析工具定期检查内存使用情况，寻找异常的内存增长。
+   代码审查：定期进行代码审查，检查闭包的使用是否合理，是否存在潜在的内存泄漏风险。
+7. 优化数据结构
+   避免大型数据结构：在闭包中避免使用大型数据结构，因为这些数据结构可能会长时间占用内存。
+8. 理解作用域链
+   清晰作用域链：理解闭包中的作用域链，避免在闭包中无意间引用外部变量，这些变量可能不会被释放。
+
+### 词法作用域
+
+#### 词法作用域规则
+
+1. 定义
+   词法作用域，也称为静态作用域，是指一个函数的作用域在函数定义时就已经确定，而不是在函数调用时确定。这意味着函数的作用域是由函数声明的位置决定的，而与函数的调用位置无关。
+
+2. 作用域的确定
+   在 JavaScript 中，如果一个变量在当前作用域中没有找到，解释器就会在外层作用域中寻找，直到全局作用域。这个查找过程是根据代码的书写位置进行的，与函数的调用方式无关。
+
+3. 词法作用域与函数
+   词法作用域规则对于理解函数如何访问变量非常关键。函数可以访问在其词法作用域内的变量，即使函数是在其词法作用域外被调用
+
+#### 词法作用域的特点
+
+1. 预测性
+   由于词法作用域是在写代码时就确定的，因此它的行为是可预测的。开发者可以通过阅读源代码的结构来理解变量的作用域。
+
+2. 作用域嵌套
+   词法作用域允许作用域嵌套，即一个作用域可以包含另一个作用域。内部作用域可以访问外部作用域的变量，但外部作用域不能访问内部作用域的变量。
+
+3. 闭包的基础
+   词法作用域是闭包（closure）概念的基础。闭包允许函数访问并操作函数外部的变量，即使外部函数已经执行完毕。
+
+#### 词法作用域的影响
+
+1. 变量生命周期
+   词法作用域规则影响变量的生命周期。变量在其定义的作用域内是活动的，当作用域结束时，通常变量也会随之销毁。
+
+2. 变量隐藏
+   在嵌套的作用域中，内部作用域可以定义与外部作用域相同名称的变量，这将隐藏外部作用域的变量。
+
+3. 作用域链的影响
+   词法作用域规则决定了作用域链的结构，即函数在查找变量时会沿着作用域链向上查找，直到找到该变量或者达到全局作用域。
+
+#### 词法作用域与动态作用域
+
+1. 对比
+   词法作用域与动态作用域是两种不同的作用域规则。动态作用域是在函数调用时确定的，这与词法作用域形成对比。
+
+2. JavaScript 的选择
+   JavaScript 采用的是词法作用域规则。这意味着变量的作用域是基于变量和函数定义的位置，而非调用位置。
+
+## 对象和原型
+
+### 对象（Object）
+
+- 基本概念：在 JavaScript 中，对象是一个包含属性和方法的集合。属性是对象的变量，而方法是能够在对象上执行的函数。
+- 创建对象：对象可以通过字面量方式创建，使用 new Object()，或者通过构造函数创建。
+
+  ```js
+  // 字面量方式
+  let person = {
+    name: 'Alice',
+    age: 25,
+    greet: function () {
+      console.log('Hello, ' + this.name);
+    },
+  };
+
+  // 构造函数方式
+  function Person(name, age) {
+    this.name = name;
+    this.age = age;
+    this.greet = function () {
+      console.log('Hello, ' + this.name);
+    };
+  }
+  let person1 = new Person('Bob', 30);
+  ```
+
+- 属性和方法访问：可以通过点记法（.）或者方括号记法（[]）访问对象的属性和方法。
+
+### 2. 原型（Prototype）
+
+- 原型的定义：原型是 JavaScript 中用于实现对象继承的一种机制。每个 JavaScript 对象在创建时都会与另一个对象关联起来，这个对象就是我们所说的原型，每个对象都会从原型“继承”属性和方法。
+- 原型链：对象的原型本身也是一个对象，因此它也有自己的原型，这样一层层向上直到一个对象的原型为 null 为止，这个关系链就是原型链。
+
+  ```js
+  let animal = {
+    isAlive: true,
+  };
+
+  function Mammal(name) {
+    this.name = name;
+  }
+
+  Mammal.prototype = animal; // 设置Mammal的原型为animal
+
+  let cat = new Mammal('Whiskers');
+  console.log(cat.isAlive); // true，cat继承了animal的isAlive属性
+  ```
+
+- 原型属性：在 JavaScript 中，每个函数都有一个特殊的属性叫做 prototype，这个属性是一个对象，当这个函数作为构造函数创建对象时，该 prototype 属性会成为新对象的原型。
+- \_\_proto\_\_属性：在对象中有一个内部属性叫做\_\_proto\_\_（现在已被标准化为 Object.getPrototypeOf()），它指向该对象的原型。
+
+### 原型与继承
+
+继承机制：在 JavaScript 中，继承是通过原型链实现的。当尝试访问一个对象的属性或方法时，如果该对象本身没有这个属性或方法，解释器就会去其原型对象中寻找，如果原型对象中也没有，再去原型的原型中寻找，直到找到为止或者到达原型链的末端（Object.prototype 的原型是 null）。
+原型的动态性：原型是动态的，给原型添加属性或方法，所有基于该原型创建的对象都会立即拥有这个属性或方法。
+
+### 原型的好处与问题
+
+代码复用：通过原型可以很容易地实现属性和方法的共享，节省内存。
+性能优化：原型链可以减少函数的重复创建，提高代码执行效率。
+潜在问题：原型链的错误使用可能会导致意外的继承关系，尤其是在使用引用类型值（如数组、对象）作为原型属性时，这些属性会在所有实例间共享，可能会导致意外的副作用。
