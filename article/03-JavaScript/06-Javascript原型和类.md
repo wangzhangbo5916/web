@@ -1,4 +1,4 @@
-# 对象和原型
+# 原型和类
 
 ## 对象（Object）
 
@@ -75,7 +75,13 @@ MyConstructor.prototype.myMethod = function () {
 
 然而，通常只有当函数被意图用作构造函数（即用来创建新的对象实例）时，修改它的 prototype 属性才有实际意义。普通函数的 prototype 属性在函数调用时并不会有特别的作用，因为普通函数调用并不涉及实例化对象，它们的 prototype 属性通常不会被访问。
 
-## 原型与继承
+### 原型的好处与问题
+
+代码复用：通过原型可以很容易地实现属性和方法的共享，节省内存。
+性能优化：原型链可以减少函数的重复创建，提高代码执行效率。
+潜在问题：原型链的错误使用可能会导致意外的继承关系，尤其是在使用引用类型值（如数组、对象）作为原型属性时，这些属性会在所有实例间共享，可能会导致意外的副作用。
+
+## 继承
 
 继承机制：在 JavaScript 中，继承是通过原型链实现的。当尝试访问一个对象的属性或方法时，如果该对象本身没有这个属性或方法，解释器就会去其原型对象中寻找，如果原型对象中也没有，再去原型的原型中寻找，直到找到为止或者到达原型链的末端（Object.prototype 的原型是 null）。
 原型的动态性：原型是动态的，给原型添加属性或方法，所有基于该原型创建的对象都会立即拥有这个属性或方法。
@@ -237,16 +243,17 @@ console.log(person.friends); // "Shelby,Court,Van,Rob,Barbie"
 
 ```js
 function createAnother(original) {
-    var clone = Object.create(original); // 通过调用函数创建一个新对象
-    clone.sayHi = function() { // 以某种方式来增强这个对象
-        console.log('hi');
-    };
-    return clone; // 返回这个对象
+  var clone = Object.create(original); // 通过调用函数创建一个新对象
+  clone.sayHi = function () {
+    // 以某种方式来增强这个对象
+    console.log('hi');
+  };
+  return clone; // 返回这个对象
 }
 
 var person = {
-    name: 'Nicholas',
-    friends: ['Shelby', 'Court', 'Van']
+  name: 'Nicholas',
+  friends: ['Shelby', 'Court', 'Van'],
 };
 
 var anotherPerson = createAnother(person);
@@ -271,29 +278,29 @@ anotherPerson.sayHi(); // 'hi'
 
 ```js
 function inheritPrototype(childConstructor, parentConstructor) {
-    var prototype = Object.create(parentConstructor.prototype); // 创建对象
-    prototype.constructor = childConstructor; // 增强对象
-    childConstructor.prototype = prototype; // 指定对象
+  var prototype = Object.create(parentConstructor.prototype); // 创建对象
+  prototype.constructor = childConstructor; // 增强对象
+  childConstructor.prototype = prototype; // 指定对象
 }
 
 function Parent(name) {
-    this.name = name;
-    this.colors = ['red', 'blue', 'green'];
+  this.name = name;
+  this.colors = ['red', 'blue', 'green'];
 }
 
-Parent.prototype.sayName = function() {
-    return this.name;
+Parent.prototype.sayName = function () {
+  return this.name;
 };
 
 function Child(name, age) {
-    Parent.call(this, name);
-    this.age = age;
+  Parent.call(this, name);
+  this.age = age;
 }
 
 inheritPrototype(Child, Parent);
 
-Child.prototype.sayAge = function() {
-    return this.age;
+Child.prototype.sayAge = function () {
+  return this.age;
 };
 
 var child = new Child('child', 10);
@@ -323,8 +330,178 @@ console.log(child.sayAge()); // 10
 - 如果需要大量创建对象，并且对象之间有大量共享的方法，组合继承或寄生组合式继承可能是更合适的选择。
 - 当不需要关心类型和构造函数，只需要一个基础对象时，寄生式继承或原型式继承是一个不错的选择。
 
-### 原型的好处与问题
+## Class
 
-代码复用：通过原型可以很容易地实现属性和方法的共享，节省内存。
-性能优化：原型链可以减少函数的重复创建，提高代码执行效率。
-潜在问题：原型链的错误使用可能会导致意外的继承关系，尤其是在使用引用类型值（如数组、对象）作为原型属性时，这些属性会在所有实例间共享，可能会导致意外的副作用。
+### Class 的基础知识
+
+#### 1. Class 基础语法
+
+声明类：
+
+```js
+class Person {
+  constructor(name) {
+    this.name = name;
+  }
+
+  greet() {
+    console.log(`Hello, my name is ${this.name}!`);
+  }
+}
+```
+
+构造函数：
+
+```js
+// 使用构造函数初始化实例属性
+constructor(name) {
+  this.name = name;
+}
+```
+
+方法定义：
+
+```js
+// 方法不需要function关键字
+greet() {
+  console.log(`Hello, my name is ${this.name}!`);
+}
+```
+
+#### 2. 静态方法和属性
+
+静态方法：
+
+```js
+class Person {
+  static species() {
+    return 'Homo Sapiens';
+  }
+}
+
+console.log(Person.species()); // 直接通过类调用
+```
+
+静态属性（目前处于提案阶段，可能需要编译器支持）：
+
+```js
+class Person {
+  static species = 'Homo Sapiens';
+}
+```
+
+#### 3. Getter 和 Setter
+
+getter：
+
+```js
+class Person {
+  constructor(firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+```
+
+setter：
+
+```js
+set fullName(name) {
+  [this.firstName, this.lastName] = name.split(' ');
+}
+```
+
+#### 4. 私有方法和属性
+
+私有属性：
+
+```js
+class Person {
+  #age = 30; // 私有属性
+
+  #calculateAge() {
+    // 私有方法
+    // ...
+  }
+}
+```
+
+#### 5. 实例属性的新写法
+
+属性声明：
+
+```js
+class Person {
+  name = 'Unnamed'; // 实例属性
+}
+```
+
+#### 6. 静态属性的新写法
+
+属性声明：
+
+```js
+class Person {
+  static planet = 'Earth'; // 静态属性
+}
+```
+
+#### 7. 类的继承与派生
+
+派生类：
+
+```js
+class Developer extends Person {
+  constructor(name, skills) {
+    super(name);
+    this.skills = skills;
+  }
+}
+```
+
+#### 8. Mixin 模式
+
+Mixin：
+
+```js
+let sayMixin = {
+  say(phrase) {
+    console.log(phrase);
+  },
+};
+
+class Dog {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+// 将sayMixin的方法混入Dog类中
+Object.assign(Dog.prototype, sayMixin);
+
+let dog = new Dog('Rex');
+dog.say('Woof'); // Rex says: Woof
+```
+
+### 为什么说 class 是语法糖？
+
+**class 被称为语法糖，是因为它提供了一种更加简洁和易于理解的语法来实现 JavaScript 已有的原型继承功能。它并没有改变 JavaScript 的继承机制，只是提供了一种新的写法。这使得面向对象编程在 JavaScript 中变得更加接近于其他传统的面向对象语言，同时保持了 JavaScript 原型继承的灵活性。**
+
+- 基于原型的继承： JavaScript 是一种基于原型的语言，这意味着对象直接从其他对象继承。在引入 class 之前，开发者通过构造函数和原型链实现继承。class 关键字实际上是基于这种已存在的原型继承机制的一个语法结构。
+- 语法简化： 使用 class 可以使得创建构造函数和处理原型链更加直观，它提供了一种类似于传统面向对象编程语言（如 Java 或 C++）的语法，但在底层仍然是使用函数和原型链实现的。
+- 功能等效： 使用 class 创建的类实际上是函数的一个特殊类型，而类方法实际上是定义在该函数的 prototype 属性上的函数。这意味着使用 class 和使用构造函数加原型链的方式，在功能上是等效的。
+- 便于理解和维护： 对于熟悉传统面向对象编程概念的开发者来说，class 提供了一种更易于理解和维护的代码结构。它隐藏了 JavaScript 中原型继承的复杂性，使得代码更加直观。
+
+### class的继承是基于那种继承模式实现的？
+
+class 的继承在 JavaScript 中是**基于原型链（Prototype Chain）的继承模式实现**的。这是 JavaScript 中唯一的继承方式，它依赖于原型对象（prototype）来分享属性和方法。
+
+- 原型对象： 每个 JavaScript 对象都有一个原型对象，从中继承方法和属性。在使用 class 关键字时，定义在类内部的方法都会被添加到类的原型对象上。
+- 构造函数的原型属性： 当一个函数（构造函数）被创建时，JavaScript 会为这个函数创建一个 prototype 属性，指向函数的原型对象。
+- 对象实例与原型链： 当使用 new 关键字创建一个对象实例时，这个实例内部的 [[Prototype]]（或 __proto__）属性会被赋值为构造函数的 prototype 属性。这样，实例就可以访问原型对象上的属性和方法。
+- 继承的实现： 使用 extends 关键字创建的子类会继承父类的属性和方法。实际上，子类的原型对象会被设置为父类的一个实例，从而形成一个原型链，子类实例可以访问父类原型上的属性和方法。
+- super关键字的作用： 在子类中，super 关键字用于调用父类的构造函数和方法。这在原型链继承模式中对应于直接通过原型链访问父类的属性和方法。
