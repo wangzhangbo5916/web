@@ -128,6 +128,72 @@ myArray.splice(2, 1, 'c'); // 删除索引2的元素，并添加新元素'c'
 console.log(myArray); // 输出: ['a', 'b', 'c', 'd', 'e']
 ```
 
+### reverse
+
+可以使用 reverse()方法来反转数组中元素的顺序，这个方法会改变原数组。
+
+```js
+let array = [1, 2, 3, 4, 5];
+array.reverse();
+console.log(array); // 输出: [5, 4, 3, 2, 1]
+```
+
+### sort
+
+sort()方法用于对数组的元素进行排序。默认情况下，sort()方法按照字符串 Unicode 码点进行排序。
+
+```js
+let array = [2, 1, 5, 4, 3];
+array.sort();
+console.log(array); // 输出: [1, 2, 3, 4, 5]
+```
+
+如果需要按照其他标准排序，比如数字大小，可以传递一个比较函数给 sort()方法。
+
+```js
+let numberArray = [2, 1, 5, 4, 3];
+numberArray.sort((a, b) => a - b);
+console.log(numberArray); // 输出: [1, 2, 3, 4, 5]
+```
+
+#### 数字排序
+
+当排序数字时，默认的排序可能不会按照数值大小进行排序，因为 sort()默认将元素作为字符串处理。为了按照数值大小排序，需要提供一个比较函数。
+
+```js
+let numbers = [10, 5, 40, 25, 1000, 1];
+numbers.sort((a, b) => a - b);
+console.log(numbers); // 输出: [1, 5, 10, 25, 40, 1000]
+```
+
+#### 字符串排序
+
+对于字符串数组，如果需要按照字母表顺序排序，可以直接使用 sort()。
+
+```js
+let stringArray = ['banana', 'apple', 'cherry'];
+stringArray.sort();
+console.log(stringArray); // 输出: ['apple', 'banana', 'cherry']
+```
+
+#### 注意事项
+
+- sort()和 reverse()方法都会直接修改原数组，而不是返回一个新的数组。
+- 如果需要保持原数组不变，可以先使用 slice()方法复制原数组，然后在副本上调用 sort()或 reverse()。
+
+```js
+let array = [1, 2, 3, 4, 5];
+let reversedArray = array.slice().reverse();
+let sortedArray = array.slice().sort((a, b) => a - b);
+console.log(array); // 原数组保持不变: [1, 2, 3, 4, 5]
+console.log(reversedArray); // 输出: [5, 4, 3, 2, 1]
+console.log(sortedArray); // 输出: [1, 2, 3, 4, 5]
+```
+
+#### 结论
+
+使用 reverse()和 sort()方法可以方便地对数组进行反转和排序。记住这两个方法都会改变原数组，如果需要保留原数组不变，应先创建数组的副本。排序时，特别是数字排序，需要提供正确的比较函数以确保按照预期的顺序排序。
+
 ## 数组的最佳实践
 
 ### 1. 使用合适的方法进行数组迭代
