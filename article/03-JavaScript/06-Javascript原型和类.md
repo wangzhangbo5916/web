@@ -28,6 +28,364 @@
 
 - 属性和方法访问：可以通过点记法（.）或者方括号记法（[]）访问对象的属性和方法。
 
+  ```js
+  // 点符号
+  console.log(person.name); // John
+  person.age = 31;
+
+  // 方括号
+  console.log(person['name']); // John
+  person['age'] = 32;
+  ```
+
+- 遍历对象：使用 for...in 循环遍历对象的属性。
+
+  ```js
+  for (let key in person) {
+    if (person.hasOwnProperty(key)) {
+      console.log(`${key}: ${person[key]}`);
+    }
+  }
+  ```
+
+- 对象的原型链：每个对象都有一个原型，可以从中继承属性和方法。
+
+  ```js
+  Person.prototype.greet = function () {
+    console.log(`Hello, my name is ${this.name}`);
+  };
+  anotherPerson.greet(); // Hello, my name is Jane
+  ```
+
+- 对象解构：用于从对象中提取属性，简化代码。
+
+  ```js
+  const { name, age } = person;
+  console.log(name); // John
+  console.log(age); // 32
+  ```
+
+- 展开运算符（Spread Operator）：用于复制对象。
+
+  ```js
+  const copiedPerson = { ...person };
+  ```
+
+- 对象冻结和密封：Object.freeze()和 Object.seal()防止对象被修改。
+
+  ```js
+  Object.freeze(person); // 不能添加、删除或修改属性
+  Object.seal(anotherPerson); // 只能修改现有属性
+  ```
+
+- 动态属性名：使用计算属性名动态设置对象的键。
+
+  ```js
+  const dynamicKey = 'email';
+  const user = {
+    [dynamicKey]: 'john@example.com',
+  };
+  ```
+
+### JavaScript 对象属性修饰符详解
+
+1. writable
+   writable 修饰符决定了属性的值是否可以被修改。当 writable 设置为 false 时，属性值不可被赋值运算符改变。
+
+```js
+let obj = {};
+
+Object.defineProperty(obj, 'a', {
+  value: 1,
+  writable: false,
+});
+
+console.log(obj.a); // 输出: 1
+obj.a = 2;
+console.log(obj.a); // 输出: 1，因为writable为false
+```
+
+2. enumerable
+   enumerable 修饰符决定了属性是否会在对象属性的枚举过程中被枚举。例如，在使用 for...in 循环或 Object.keys()方法时，只有 enumerable 为 true 的属性才会被包括。
+
+```js
+let obj = {};
+
+Object.defineProperty(obj, 'b', {
+  value: 2,
+  enumerable: false,
+});
+
+for (let key in obj) {
+  console.log(key); // 不会输出任何东西，因为b的enumerable为false
+}
+
+console.log(Object.keys(obj)); // 输出: []，因为b的enumerable为false
+```
+
+3. configurable
+   configurable 修饰符决定了属性是否可以被删除，以及除了 writable 以外的属性描述符是否可以被修改。
+
+```js
+let obj = {};
+
+Object.defineProperty(obj, 'c', {
+  value: 3,
+  configurable: false,
+});
+
+delete obj.c;
+console.log(obj.c); // 输出: 3，因为configurable为false
+
+// 尝试修改属性描述符将抛出错误
+// Object.defineProperty(obj, 'c', { enumerable: true }); // TypeError
+```
+
+使用 Object.defineProperties 同时定义多个属性
+你也可以使用 Object.defineProperties 方法同时定义多个属性。
+
+```js
+let obj = {};
+
+Object.defineProperties(obj, {
+  first: {
+    value: 'first value',
+    writable: true,
+    enumerable: true,
+    configurable: true,
+  },
+  second: {
+    value: 'second value',
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  },
+});
+
+console.log(obj.first); // 输出: first value
+console.log(obj.second); // 输出: second value
+```
+
+获取属性的修饰符
+使用 Object.getOwnPropertyDescriptor 方法可以获取指定属性的修饰符。
+
+```js
+let obj = { d: 4 };
+Object.defineProperty(obj, 'd', {
+  value: 4,
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});
+
+let descriptor = Object.getOwnPropertyDescriptor(obj, 'd');
+console.log(descriptor);
+/* 输出:
+{
+  value: 4,
+  writable: true,
+  enumerable: true,
+  configurable: true
+}
+*/
+```
+
+**注意事项:**
+
+- 一旦属性设置为不可配置（configurable: false），就不能再把它变回可配置的了，也不能修改它的 enumerable 和 writable 属性。
+- Object.freeze(obj)方法可以使得 obj 的所有属性变为不可写（writable: false）和不可配置（configurable: false）。
+- Object.seal(obj)方法可以阻止新属性的添加，并将所有现有属性设置为不可配置（configurable: false），但现有属性的 writable 属性保持不变。
+
+### JavaScript 对象属性的 Setter 和 Getter 详解
+
+在 JavaScript 中，对象属性可以包括两种特殊的方法：setter 和 getter。这些方法允许你在读取（getter）和设置（setter）属性值时执行更复杂的操作。
+
+Getter（访问器）
+Getter 方法是一个可以返回属性值的函数。当你访问一个属性时，如果该属性有对应的 getter 方法，这个方法就会被调用，并返回它的返回值作为属性访问的结果。
+
+```js
+let obj = {
+  a: 1,
+  b: 2,
+  get sum() {
+    return this.a + this.b;
+  },
+};
+
+console.log(obj.sum); // 输出: 3
+```
+
+在这个例子中，sum 是一个 getter，当访问 obj.sum 时，实际上是在执行 sum 方法，并返回 a 和 b 的和。
+
+Setter（设置器）
+Setter 方法是一个当属性值被设置时会被调用的函数。这个方法接受一个参数，即被赋予的新值，并可以基于这个新值执行操作。
+
+```js
+let obj = {
+  a: 1,
+  b: 2,
+  set updateA(value) {
+    this.a = value;
+    console.log(`a is now set to ${value}`);
+  },
+};
+
+obj.updateA = 10; // 输出: a is now set to 10
+console.log(obj.a); // 输出: 10
+```
+
+在这个例子中，updateA 是一个 setter，当我们尝试设置 obj.updateA 的值时，实际上是在调用 updateA 这个方法，并将新值传递给它。
+
+使用 Object.defineProperty 定义 Getter 和 Setter
+你也可以使用 Object.defineProperty 方法来定义 getter 和 setter。
+
+```js
+let obj = {
+  a: 1,
+  b: 2,
+};
+
+Object.defineProperty(obj, 'sum', {
+  get: function () {
+    return this.a + this.b;
+  },
+  set: function (value) {
+    this.a = value / 2;
+    this.b = value / 2;
+  },
+});
+
+console.log(obj.sum); // 输出: 3
+obj.sum = 20;
+console.log(obj.a); // 输出: 10
+console.log(obj.b); // 输出: 10
+```
+
+在这个例子中，我们定义了 sum 属性的 getter 和 setter，getter 返回 a 和 b 的和，而 setter 则将传入的值平均分配给 a 和 b。
+
+**注意事项:**
+
+- Getter 和 Setter 可以帮助你实现数据的封装和验证。
+- 使用 Getter 和 Setter 可以在不破坏现有代码结构的情况下，添加额外的逻辑到属性的存取过程中。
+- 如果只定义了 getter 而没有定义 setter，那么尝试设置该属性的值时不会有任何效果，但不会报错。
+- 如果只定义了 setter 而没有定义 getter，那么尝试读取该属性的值时会得到 undefined。
+
+#### 使用场景
+
+1. 数据封装和验证
+   使用 getter 和 setter 可以封装内部数据结构，同时提供一个接口来控制属性的访问，这对于数据验证非常有用。
+
+```js
+class User {
+  constructor(name) {
+    this.setName(name);
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  set name(value) {
+    if (value.length < 4) {
+      console.log('Name is too short.');
+      return;
+    }
+    this._name = value;
+  }
+}
+
+let user = new User('John');
+console.log(user.name); // John
+user.name = 'Al'; // Name is too short.
+```
+
+在这个例子中，通过 setter 方法确保了用户名不会太短。
+
+2. 延迟计算
+   如果一个属性的值需要通过复杂计算得出，并且不经常改变，你可以使用 getter 来实现延迟计算，这样只有在实际需要值的时候才进行计算。
+
+```js
+let obj = {
+  get expensiveOperation() {
+    if (!this._cachedValue) {
+      console.log('Performing expensive calculation...');
+      this._cachedValue = performExpensiveCalculation();
+    }
+    return this._cachedValue;
+  },
+};
+```
+
+在这个例子中，只有在第一次访问 expensiveOperation 属性时才会执行耗时的计算，并缓存结果。
+
+3. 依赖跟踪和通知
+   当对象的某些属性依赖于其他属性时，可以使用 setter 来自动更新依赖属性，或者通知其他系统组件属性已变更。
+
+```js
+class Temperature {
+  constructor(celsius) {
+    this.celsius = celsius;
+  }
+
+  get fahrenheit() {
+    return (this.celsius * 9) / 5 + 32;
+  }
+
+  set fahrenheit(value) {
+    this.celsius = ((value - 32) * 5) / 9;
+  }
+}
+
+let temp = new Temperature(0);
+console.log(temp.fahrenheit); // 32
+temp.fahrenheit = 212;
+console.log(temp.celsius); // 100
+```
+
+在这个例子中，摄氏度和华氏度之间的转换通过 getter 和 setter 自动处理。
+
+4. 控制属性的可写性和可枚举性
+   通过使用 Object.defineProperty，你可以更精细地控制属性的特性，比如将属性设置为只读或不可枚举。
+
+```js
+let obj = {};
+Object.defineProperty(obj, 'readOnly', {
+  value: 42,
+  writable: false,
+});
+
+console.log(obj.readOnly); // 42
+obj.readOnly = 100; // 没有效果，因为属性是只读的
+```
+
+在这个例子中，readOnly 属性被设置为只读。
+
+5. 保持接口的一致性
+   即使属性的内部实现改变，通过 getter 和 setter 也可以保持对象对外的接口不变，这有助于维护和扩展代码。
+
+```js
+class Circle {
+  constructor(radius) {
+    this.radius = radius;
+  }
+
+  get diameter() {
+    return this.radius * 2;
+  }
+
+  set diameter(diameter) {
+    this.radius = diameter / 2;
+  }
+}
+
+let circle = new Circle(1);
+console.log(circle.diameter); // 2
+circle.diameter = 4;
+console.log(circle.radius); // 2
+```
+
+在这个例子中，即使圆的表示方式从直径变为半径，对于使用 diameter 的代码来说接口依然是一致的。
+
 ## 原型（Prototype）
 
 - 原型的定义：原型是 JavaScript 中用于实现对象继承的一种机制。每个 JavaScript 对象在创建时都会与另一个对象关联起来，这个对象就是我们所说的原型，每个对象都会从原型“继承”属性和方法。
@@ -496,12 +854,112 @@ dog.say('Woof'); // Rex says: Woof
 - 功能等效： 使用 class 创建的类实际上是函数的一个特殊类型，而类方法实际上是定义在该函数的 prototype 属性上的函数。这意味着使用 class 和使用构造函数加原型链的方式，在功能上是等效的。
 - 便于理解和维护： 对于熟悉传统面向对象编程概念的开发者来说，class 提供了一种更易于理解和维护的代码结构。它隐藏了 JavaScript 中原型继承的复杂性，使得代码更加直观。
 
-### class的继承是基于那种继承模式实现的？
+### class 的继承是基于那种继承模式实现的？
 
 class 的继承在 JavaScript 中是**基于原型链（Prototype Chain）的继承模式实现**的。这是 JavaScript 中唯一的继承方式，它依赖于原型对象（prototype）来分享属性和方法。
 
 - 原型对象： 每个 JavaScript 对象都有一个原型对象，从中继承方法和属性。在使用 class 关键字时，定义在类内部的方法都会被添加到类的原型对象上。
 - 构造函数的原型属性： 当一个函数（构造函数）被创建时，JavaScript 会为这个函数创建一个 prototype 属性，指向函数的原型对象。
-- 对象实例与原型链： 当使用 new 关键字创建一个对象实例时，这个实例内部的 [[Prototype]]（或 __proto__）属性会被赋值为构造函数的 prototype 属性。这样，实例就可以访问原型对象上的属性和方法。
+- 对象实例与原型链： 当使用 new 关键字创建一个对象实例时，这个实例内部的 [[Prototype]]（或 **proto**）属性会被赋值为构造函数的 prototype 属性。这样，实例就可以访问原型对象上的属性和方法。
 - 继承的实现： 使用 extends 关键字创建的子类会继承父类的属性和方法。实际上，子类的原型对象会被设置为父类的一个实例，从而形成一个原型链，子类实例可以访问父类原型上的属性和方法。
-- super关键字的作用： 在子类中，super 关键字用于调用父类的构造函数和方法。这在原型链继承模式中对应于直接通过原型链访问父类的属性和方法。
+- super 关键字的作用： 在子类中，super 关键字用于调用父类的构造函数和方法。这在原型链继承模式中对应于直接通过原型链访问父类的属性和方法。
+
+### 类的最佳实践
+
+#### 1. 使用构造函数初始化实例属性
+
+构造函数是类的默认方法，通过构造函数可以确保实例被创建时具有所需的初始状态。
+
+```js
+class MyClass {
+  constructor(value) {
+    this.property = value;
+  }
+}
+```
+
+#### 2. 利用 get 和 set 访问器
+
+使用 getter 和 setter 可以控制对类的实例属性的访问和赋值，可以添加额外的逻辑，例如验证或者处理。
+
+```js
+class MyClass {
+  constructor(value) {
+    this._property = value;
+  }
+
+  get property() {
+    // 可以添加额外的获取逻辑
+    return this._property;
+  }
+
+  set property(value) {
+    // 可以添加额外的设置逻辑
+    this._property = value;
+  }
+}
+```
+
+#### 3. 保持类的成员函数简短和专一
+
+每个成员函数应该只做一件事情，这样代码更容易理解和维护。
+
+```js
+class MyClass {
+  // ...
+
+  doSomething() {
+    // 函数体应该简短且只做一件事情
+  }
+}
+```
+
+#### 4. 使用静态方法和属性
+
+静态方法和属性属于类本身而不是类的实例。它们通常用于实现与实例无关的功能。
+
+```js
+class MyClass {
+  static staticProperty = 'some value';
+
+  static staticMethod() {
+    // 静态方法体
+  }
+}
+```
+
+#### 5. 保持类的封装性
+
+避免直接操作类的内部属性，使用方法来访问和修改这些属性。
+
+```js
+class MyClass {
+  #privateProperty; // 使用#来创建私有属性
+
+  constructor(value) {
+    this.#privateProperty = value;
+  }
+
+  publicMethod() {
+    // 使用公共方法来操作私有属性
+  }
+}
+```
+
+#### 6. 继承应该清晰且合理
+
+当创建基于另一个类的新类时，确保继承是有意义的，并且保持父类和子类之间的关系清晰。
+
+```js
+class ParentClass {
+  // ...
+}
+
+class ChildClass extends ParentClass {
+  // ...
+}
+```
+
+#### 7. 避免使用类来管理全局状态
+
+类应该用于实例化对象，不应该用来作为全局状态的容器。考虑使用模块或其他设计模式来管理全局状态。
