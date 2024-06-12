@@ -1,14 +1,7 @@
 # 基本语法
 
-- 对象和原型: 对象字面量、构造函数、原型链、继承、Object 类的方法。
-- 数组和迭代方法: 数组的创建和操作，以及 map、filter、reduce 等迭代方法。
 - 字符串和正则表达式: 字符串处理方法和正则表达式的使用。
 - 错误处理: try-catch 语句、throw 关键字、Error 对象。
-- 箭头函数: 提供了一种更简洁的方式来写函数表达式。
-- 默认参数: 函数参数可以有默认值。
-- 解构赋值: 一种特殊的语法，允许我们“解开”数组或对象，并将其元素或属性分配给一系列变量。
-- Array 新方法: Array.prototype.find、 Array.prototype.includes 等。
-- Array 的 flat()和 flatMap(): flat() 用于将嵌套的数组“拉平”，flatMap() 首先使用映射函数映射每个元素，然后将结果压缩成一个新数组。
 - 新数据结构: Map、Set、WeakMap 和 WeakSet。
 - Object.values/Object.entries: 返回一个对象自身的所有可枚举属性值的数组/Object.entries()返回一个数组，其元素是与直接在 object 上找到的可枚举属性键值对相对应的数组。
 - Object.fromEntries: 将键值对列表转换为一个对象。
@@ -1027,3 +1020,267 @@ for (let value of set) {
 3. 中断迭代：可以使用 break, continue, return 或 throw 控制迭代流程。
 4. 兼容性：for-of 在 ES6（ECMAScript 2015）中引入，不支持 ES6 的旧环境可能无法使用。
 5. 性能：虽然 for-of 提供了更简洁的语法，但在某些情况下（特别是在旧的 JavaScript 引擎中），它可能不如传统的 for 循环高效。
+
+## 错误处理
+
+### 错误处理最佳实践
+
+1. 使用 Error 对象而非字符串或其他类型
+   使用 Error 对象抛出错误而不是字符串或其他原始类型，因为 Error 对象包含了堆栈追踪和其他有用的调试信息。
+
+```js
+// 推荐
+throw new Error('Something went wrong');
+
+// 不推荐
+throw 'Something went wrong';
+```
+
+2. 为错误创建自定义类
+   为不同类型的错误创建自定义错误类，这有助于错误的识别和处理。继承自 Error 类可以保证堆栈追踪的完整性。
+
+```js
+class CustomError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = this.constructor.name;
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, this.constructor);
+    } else { 
+      this.stack = (new Error(message)).stack; 
+    }
+  }
+}
+```
+
+### 3. 只捕获你能处理的错误
+
+使用 try...catch 时，只捕获那些你确实能够处理的错误。不要捕获所有错误，否则可能会掩盖潜在的问题。
+
+```js
+try {
+  // 只有当你能处理这个错误时
+  doSomethingRisky();
+} catch (error) {
+  if (error instanceof KnownError) {
+    handleTheError(error);
+  } else {
+    throw error; // 无法处理的错误应该继续抛出
+  }
+}
+```
+
+### 4. 使用 finally 清理资源
+
+无论是否发生错误，都需要执行清理工作时，使用 finally 块。这确保了资源总是被正确释放。
+
+```js
+try {
+  acquireResource();
+} catch (error) {
+  handleTheError(error);
+} finally {
+  releaseResource();
+}
+```
+
+### 5. 避免使用空的 catch 块
+
+空的 catch 块会吞掉所有错误，这会使得调试变得非常困难。如果你不想处理某个错误，至少要记录它。
+
+```js
+try {
+  doSomething();
+} catch (error) {
+  // 不推荐：空的catch块
+  // 推荐：至少记录错误信息
+  console.error(error);
+}
+```
+
+### 6. 对于异步代码使用 Promise 的 catch 方法或 async/await
+
+使用 Promise 的.catch()方法或 async/await 结合 try...catch 来处理异步操作中的错误。
+
+```js
+// 使用Promise的.catch()
+doSomethingAsync()
+  .then((result) => {
+    processTheResult(result);
+  })
+  .catch((error) => {
+    handleTheError(error);
+  });
+
+// 使用async/await
+async function asyncFunction() {
+  try {
+    let result = await doSomethingAsync();
+    processTheResult(result);
+  } catch (error) {
+    handleTheError(error);
+  }
+}
+```
+
+### 7. 不要忽略错误
+
+不要忽略捕获到的错误，即使你认为它们不重要。未处理的错误可能会导致更严重的问题。
+
+### 8. 使用错误边界（Error Boundaries）
+
+在前端框架（如 React）中，使用错误边界来捕获子组件树中的 JavaScript 错误，防止整个应用崩溃。
+
+```js
+class ErrorBoundary extends React.Component {
+  // ...
+  componentDidCatch(error, info) {
+    // 错误处理逻辑
+  }
+  // ...
+}
+```
+
+### 9. 利用工具和策略进行错误监控
+
+使用错误监控工具（如 Sentry, Rollbar 等）来记录和分析生产环境中的错误，以便及时响应和修复。
+
+### 10. 进行单元测试和集成测试
+
+通过编写单元测试和集成测试来确保代码的健壮性，并在代码更改后及时发现新引入的错误。
+
+## 默认参数
+
+### 1. 默认参数的概念
+
+在 JavaScript 中，函数参数可以有默认值。如果在调用函数时未提供参数，或者参数值为 undefined，则会使用默认值。
+
+```js
+function greet(name = 'Guest') {
+  return `Hello, ${name}!`;
+}
+
+greet('Alice'); // 输出: "Hello, Alice!"
+greet(); // 输出: "Hello, Guest!"
+greet(undefined); // 输出: "Hello, Guest!"
+```
+
+### 2. 默认参数的表达式
+
+默认参数可以是任何有效的 JavaScript 表达式，包括函数调用。
+
+```js
+function getDefaultAge() {
+  return 18;
+}
+
+function register(name, age = getDefaultAge()) {
+  // ...
+}
+```
+
+### 3. 参数解构与默认值
+
+当函数参数是一个对象或数组时，可以在函数签名中结合解构和默认参数。
+
+```js
+function setOptions({ url, method = 'GET' } = {}) {
+  console.log(`URL: ${url}, Method: ${method}`);
+}
+
+setOptions({ url: 'https://example.com' }); // 输出: "URL: https://example.com, Method: GET"
+setOptions(); // 输出: "URL: undefined, Method: GET"
+```
+
+### 4. 默认参数的作用域和暂时性死区
+
+函数参数创建了自己的作用域和暂时性死区，这意味着不能在默认参数表达式中访问后面的参数。
+
+```js
+function example(a = b, b) {
+  // ...
+}
+// 抛出错误：在初始化 'a' 时不能访问 'b'
+```
+
+## 解构赋值
+
+### 1. 解构赋值的概念
+
+解构赋值允许你直接从数组或对象中提取值，并将它们赋给不同的变量。
+
+数组解构
+从数组中提取值，按照数组元素的位置来指定要提取的值。
+
+```js
+let [a, b] = [1, 2];
+console.log(a); // 输出: 1
+console.log(b); // 输出: 2
+```
+
+对象解构
+从对象中提取值，根据对象的属性名来指定要提取的值。
+
+```js
+let { x, y } = { x: 10, y: 20 };
+console.log(x); // 输出: 10
+console.log(y); // 输出: 20
+```
+
+2. 解构赋值的默认值
+   解构赋值可以设置默认值，当解构的值是 undefined 时将使用默认值。
+
+```js
+let { a = 10, b = 5 } = { a: 3 };
+console.log(a); // 输出: 3
+console.log(b); // 输出: 5
+```
+
+3. 解构赋值与函数参数
+   解构赋值常用于函数参数中，使得函数参数更加灵活和可读。
+
+```js
+function drawChart({
+  size = 'big',
+  coords = { x: 0, y: 0 },
+  radius = 25,
+} = {}) {
+  console.log(size, coords, radius);
+  // ...
+}
+
+drawChart({
+  coords: { x: 18, y: 30 },
+  radius: 30,
+});
+```
+
+### 4. 嵌套解构
+
+解构赋值可以嵌套，允许从嵌套的对象或数组中提取值。
+
+```js
+let options = {
+  size: {
+    width: 100,
+    height: 200,
+  },
+  items: ['Cake', 'Donut'],
+  extra: true,
+};
+
+let {
+  size: { width, height },
+  items: [item1, item2],
+  extra,
+} = options;
+
+console.log(width, height, item1, item2, extra);
+```
+
+### 5. 解构赋值的其它用途
+
+- 交换变量的值
+- 从函数返回多个值
+- 函数参数定义
+- 解析函数参数中的对象属性
