@@ -1,7 +1,6 @@
 # 基本语法
 
 - 字符串和正则表达式: 字符串处理方法和正则表达式的使用。
-- 新数据结构: Map、Set、WeakMap 和 WeakSet。
 - Object.values/Object.entries: 返回一个对象自身的所有可枚举属性值的数组/Object.entries()返回一个数组，其元素是与直接在 object 上找到的可枚举属性键值对相对应的数组。
 - Object.fromEntries: 将键值对列表转换为一个对象。
 - String padding: String.prototype.padStart 和 String.prototype.padEnd 允许你将空字符串或其他字符串添加到原始字符串的开头或结尾。
