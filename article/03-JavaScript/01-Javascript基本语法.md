@@ -1,7 +1,6 @@
 # 基本语法
 
 - 字符串和正则表达式: 字符串处理方法和正则表达式的使用。
-- 错误处理: try-catch 语句、throw 关键字、Error 对象。
 - 新数据结构: Map、Set、WeakMap 和 WeakSet。
 - Object.values/Object.entries: 返回一个对象自身的所有可枚举属性值的数组/Object.entries()返回一个数组，其元素是与直接在 object 上找到的可枚举属性键值对相对应的数组。
 - Object.fromEntries: 将键值对列表转换为一个对象。
@@ -678,6 +677,385 @@ const bigIntValueUnsigned = BigInt.asUintN(32, BigInt(maxUint32) + 1n);
 - 不是所有的 JavaScript 环境都支持 BigInt，特别是在一些旧的浏览器或 JavaScript 环境中可能不可用。
 - 在进行位运算时，BigInt 的行为与 Number 不同，因为 BigInt 可以表示任意大小的整数。
 
+### Map
+
+Map 是一种键值对集合，类似于对象，但它的键可以是任何类型的值，包括函数、对象或任意基本类型。
+
+```js
+let map = new Map();
+
+// 设置键值对
+map.set('key1', 'value1');
+map.set('key2', 'value2');
+
+// 获取值
+console.log(map.get('key1')); // 输出: value1
+
+// 检查键是否存在
+console.log(map.has('key2')); // 输出: true
+
+// 遍历 Map
+map.forEach((value, key) => {
+  console.log(key + ': ' + value);
+});
+
+// 删除键
+map.delete('key1');
+
+// 清空 Map
+map.clear();
+```
+
+**使用场景**：
+
+- 当需要存储不同数据类型的键时。
+- 当需要保持键值对的插入顺序时。
+- 当进行大量的查找、删除操作时，因为 Map 的这些操作通常比在对象中更快。
+
+**最佳实践**：
+
+- 使用 Map 来替代对象字面量，尤其是键的集合不仅限于字符串和符号时。
+- 在需要频繁增删键值对的场合使用 Map，以获得更好的性能。
+
+```js
+let productRatings = new Map();
+
+// 添加商品评分
+productRatings.set('product1', 4.7);
+productRatings.set('product2', 4.3);
+
+// 更新商品评分
+productRatings.set('product1', 4.8);
+
+// 获取商品评分
+console.log(productRatings.get('product1')); // 输出: 4.8
+
+// 迭代商品评分
+for (let [product, rating] of productRatings) {
+  console.log(product + ' has a rating of ' + rating);
+}
+```
+
+### Set
+
+Set 是一种集合数据结构，它只存储唯一的值，不允许重复。
+
+```js
+let set = new Set();
+
+// 添加值
+set.add('apple');
+set.add('banana');
+set.add('apple'); // 重复的 'apple' 不会被添加
+
+// 检查值是否存在
+console.log(set.has('apple')); // 输出: true
+
+// 遍历 Set
+set.forEach((value) => {
+  console.log(value);
+});
+
+// 删除值
+set.delete('apple');
+
+// 清空 Set
+set.clear();
+```
+
+### WeakMap
+
+WeakMap 是一种特殊的 Map，其键必须是对象，而且是弱引用的，这意味着如果没有其他引用指向键对象，这些键对象可以被垃圾回收机制回收。
+
+```js
+let weakmap = new WeakMap();
+let obj = {};
+
+// 设置键值对
+weakmap.set(obj, 'some value');
+
+// 获取值
+console.log(weakmap.get(obj)); // 输出: some value
+
+// obj 没有其他引用时，可以被垃圾回收
+```
+
+**使用场景**：
+
+- 当你需要将额外的数据与对象关联，而不干扰对象的垃圾回收时。
+- 在实现私有属性时，WeakMap 可以作为存储私有数据的安全方式。
+
+**最佳实践**：
+
+- 不要在 WeakMap 中存储对象的引用，否则这些对象将不会被垃圾收集器回收。
+- 由于 WeakMap 的键不可枚举，所以不应该用它来存储可枚举的数据。
+
+```js
+let weakMap = new WeakMap();
+let domNode = document.getElementById('myElement');
+
+// 给 DOM 节点关联一些数据，不影响垃圾回收
+weakMap.set(domNode, { timesClicked: 0 });
+
+// 当 DOM 节点被移除时，关联的数据会自动被清理
+```
+
+### WeakSet
+
+WeakSet 是一种集合，它只能包含对象，并且这些对象都是弱引用的，这意味着如果没有其他引用指向这些对象，它们可以被垃圾回收。
+
+```js
+let weakset = new WeakSet();
+let obj = {};
+
+// 添加对象
+weakset.add(obj);
+
+// 检查对象是否存在
+console.log(weakset.has(obj)); // 输出: true
+
+// obj 没有其他引用时，可以被垃圾回收
+```
+
+**使用场景**：
+
+- 当你需要跟踪一组对象是否已经被处理过，而不阻止这些对象被垃圾回收时。
+- 在管理不希望外部代码访问的对象集合时。
+
+**最佳实践**：
+
+- 与 WeakMap 类似，WeakSet 中的对象都是弱引用，不要用它来存储需要长期持有的对象。
+- 由于 WeakSet 的成员不可枚举，所以它不适合用来存储需要迭代的数据。
+
+```js
+let weakSet = new WeakSet();
+
+(function () {
+  let a = {};
+  weakSet.add(a);
+  // 在这个匿名函数执行完毕后，没有其他引用指向对象a，它将被垃圾回收
+})();
+
+// 无法检查a是否在weakSet中，因为a已经被清理
+```
+
+### 为什么 Map 和 Set 查找和删除效率高于对象
+
+#### 1. 数据结构差异
+
+**Map 和 Set：**
+
+- Map 是键值对集合，Set 是值的集合，两者都是 ES6 新增的数据结构。
+- 它们都可以存储不重复的值，其中 Map 是一组键值对的结构，具有唯一的键。
+- Map 和 Set 都允许存储任何类型的唯一值，无论是原始值还是对象引用。
+- 它们都保持了元素的插入顺序，使得迭代行为是可预测的。
+- Map 和 Set 都是基于哈希表实现的，这意味着它们在添加、查找和删除操作上提供了非常快速的性能，通常是常数时间复杂度 O(1)。
+
+**对象：**
+
+- 对象在 JavaScript 中是最基本的数据结构，通常用来存储键值对，但键必须是字符串或符号。
+- 对象没有保持元素插入顺序的特性，特别是当键是整数时，其迭代顺序可能会变得不可预测。
+- 对象没有内建的机制来追踪存储的键值对数量，需要通过代码来手动计算。
+- 对象的键值对并不是基于哈希表实现的，因此在查找和删除操作上可能不如 Map 或 Set 高效。
+
+#### 2. 查找和删除操作
+
+**Map 和 Set：**
+
+- 查找（Map: get, Set: has）：Map 和 Set 的查找操作都是通过哈希表来实现的，这使得无论数据结构中存储了多少元素，查找操作的时间复杂度都接近于 O(1)。
+- 删除（Map: delete, Set: delete）：同样，Map 和 Set 的删除操作也受益于哈希表结构，可以快速定位并删除元素，时间复杂度接近于 O(1)。
+
+**对象：**
+
+- 查找：在对象中查找属性可能需要遍历对象的所有属性直到找到目标键，这在属性数量多的情况下性能会下降，接近线性时间复杂度 O(n)。
+- 删除（delete）：删除对象的属性可能导致 JavaScript 引擎对对象的形状（shape）进行调整，这可能是一个相对较慢的操作，并且在删除操作频繁时可能会导致性能问题。
+
+#### 3. 结论
+
+Map 和 Set 被设计为在频繁执行查找和删除操作的场景下提供高效的性能。它们的内部实现（哈希表）使得这些操作的时间复杂度接近于 O(1)，而对象可能因为缺乏这样的优化而在性能上表现不佳。因此，在需要高效查找和删除操作的场景中，推荐使用 Map 或 Set 而不是对象。
+
+### 为什么 Map 和 Set 的键可以是对象、函数等任何值
+
+#### 1. 设计原则
+
+**强化语言能力：**
+
+- Map 和 Set 的设计是为了弥补传统对象（Object）的限制，提供更加灵活的数据结构。
+- 这些数据结构的目的是为了能够使用更多种类的值作为键，包括对象和函数，这样可以让开发者有更多的选择和灵活性去构建复杂的数据集合。
+
+#### 2. 技术实现
+
+**使用哈希表：**
+
+- Map 和 Set 内部使用哈希表作为基础结构，这允许它们对任何类型的键进行操作。
+- 哈希表通过计算键的哈希值来存储和检索数据，这个哈希值是根据键的内容计算出来的，而不仅仅是基于字符串或数字。
+
+**引用唯一性：**
+
+- 对于对象和函数这样的非原始值，它们在内存中的引用是唯一的。
+- Map 和 Set 通过这些唯一的引用来区分不同的键，这就允许它们将对象和函数作为键使用。
+
+#### 3. 使用场景
+
+**实例关联：**
+
+- 使用对象作为键允许开发者创建一个与对象实例直接关联的数据映射，这在某些场景下非常有用，例如缓存对象的计算结果。
+
+**函数映射：**
+
+- 函数作为键可以用于高阶函数编程中，例如在事件监听器或回调函数映射中，这提供了一种强大的方式来动态管理和解绑事件监听器。
+
+#### 4. 结论
+
+Map 和 Set 能够使用任何类型的值作为键，这是因为它们是为了提供比传统对象更强大的功能而设计的。它们的内部实现支持这种灵活性，而且它们的使用场景也证明了这种设计的实用性。总的来说，这种设计使得 Map 和 Set 成为在需要键的多样性和灵活性时的理想选择。
+
+
+### weakMap和weakSet在实际开发中的应用场景有哪些
+
+#### 1. 管理私有数据
+
+WeakMap 可以用来存储对象实例的私有数据。由于 WeakMap 中的键是弱引用，一旦外部对这个对象的引用被删除，对象将会被垃圾回收，相应的私有数据也会随之消失，不会造成内存泄漏。
+
+```js
+const privateData = new WeakMap();
+
+class Person {
+  constructor(name, age) {
+    privateData.set(this, { name, age });
+  }
+  
+  getName() {
+    return privateData.get(this).name;
+  }
+  
+  getAge() {
+    return privateData.get(this).age;
+  }
+}
+
+let john = new Person('John', 30);
+console.log(john.getName()); // 'John'
+john = null; // privateData 中对应的数据可以被垃圾回收
+```
+
+#### 2. 缓存计算结果
+
+WeakMap 可以用于缓存对象的计算结果，只要对象还被使用，缓存就存在。当对象不再被引用，垃圾回收器会自动清理这个对象以及它的缓存，这样可以避免在长时间运行的应用中出现内存泄漏。
+
+```js
+let cache = new WeakMap();
+
+function complexComputation(obj) {
+  if (cache.has(obj)) {
+    return cache.get(obj);
+  } else {
+    let result = /* 进行复杂计算 */ obj;
+    cache.set(obj, result);
+    return result;
+  }
+}
+
+let data = { key: 'value' };
+complexComputation(data); // 第一次计算并缓存结果
+data = null; // 之后data可以被垃圾回收，cache中的记录也会被清除
+```
+
+#### 3. 跟踪对象的状态
+
+WeakMap 可以用来跟踪对象的状态，而不必担心在对象不再使用后还要手动清理。例如，可以用它来跟踪 DOM 元素是否已经被处理过，而不用担心元素从文档中移除时的清理问题。
+
+```js
+const processedElements = new WeakSet();
+
+function processElement(element) {
+  if (!processedElements.has(element)) {
+    // 对element进行处理
+    processedElements.add(element);
+  }
+}
+
+let el = document.getElementById('my-element');
+processElement(el); // 处理DOM元素
+el.parentNode.removeChild(el);
+el = null; // el被移除，processedElements中的记录将被垃圾回收
+```
+
+#### 4. 关联额外数据
+
+WeakMap 可以用来给 DOM 节点关联额外的信息，如事件监听器或数据绑定，而不必担心在节点被移除时忘记清除这些信息。
+
+```js
+const elementData = new WeakMap();
+
+function attachData(element, data) {
+  elementData.set(element, data);
+}
+
+function getData(element) {
+  return elementData.get(element);
+}
+
+let div = document.createElement('div');
+attachData(div, { related: true });
+console.log(getData(div)); // { related: true }
+div = null; // div被移除时，其关联的数据也会被垃圾回收
+
+```
+
+#### 5. 管理事件监听器
+
+WeakMap 可以用于管理事件监听器的引用。例如，当你向一个对象添加事件监听器时，可以使用 WeakMap 来存储监听器，这样当对象被回收时监听器也会自动消失。
+
+```js
+const eventListeners = new WeakMap();
+
+function addListener(obj, event, listener) {
+  let listeners = eventListeners.get(obj);
+  if (!listeners) {
+    listeners = new Map();
+    eventListeners.set(obj, listeners);
+  }
+  if (!listeners.has(event)) {
+    listeners.set(event, new Set());
+  }
+  listeners.get(event).add(listener);
+}
+
+function removeListener(obj, event, listener) {
+  const listeners = eventListeners.get(obj);
+  if (listeners && listeners.has(event)) {
+    listeners.get(event).delete(listener);
+  }
+}
+
+let button = document.createElement('button');
+function onClick() { console.log('Button clicked.'); }
+addListener(button, 'click', onClick);
+removeListener(button, 'click', onClick);
+button = null; // button被移除时，其监听器也会被垃圾回收
+```
+
+#### 6. 优化数据结构
+
+WeakSet 可以用来存储一个对象集合，并且只要集合中的某个对象不再被其他地方引用，它就可以被垃圾回收。这种方式在需要存储大量对象并且希望能自动清理那些不再需要的对象时非常有用。
+
+```js
+const seenObjects = new WeakSet();
+
+function processObject(obj) {
+  if (!seenObjects.has(obj)) {
+    seenObjects.add(obj);
+    // 对obj进行一些处理
+  }
+}
+
+let obj1 = { key: 'value1' };
+let obj2 = { key: 'value2' };
+processObject(obj1);
+processObject(obj2);
+obj1 = null; // obj1可以被垃圾回收，seenObjects中的记录也会被清除
+```
+
 ## globalThis
 
 ### 概述
@@ -1046,8 +1424,8 @@ class CustomError extends Error {
     this.name = this.constructor.name;
     if (typeof Error.captureStackTrace === 'function') {
       Error.captureStackTrace(this, this.constructor);
-    } else { 
-      this.stack = (new Error(message)).stack; 
+    } else {
+      this.stack = new Error(message).stack;
     }
   }
 }
