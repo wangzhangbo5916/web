@@ -330,4 +330,38 @@ console.log(arrowFunction() === obj); // 输出: true
 
 在上面的例子中，arrowFunction 的 this 被捕获并固定为 obj.method 执行时的 this，即 obj 对象本身。这使得箭头函数在处理事件、定时器、异步操作等场景下非常有用，因为它们通常需要一个不变的 this 上下文
 
+### Function.prototype.toString 的修订
 
+#### 背景
+
+Function.prototype.toString 方法返回一个表示函数源代码的字符串。在 ES2019 之前，这个方法的具体行为没有被很好地规范化，不同的 JavaScript 引擎可能会返回不同格式的代码字符串，有时候甚至是完全不包含函数体的字符串。
+
+#### ES2019 规范的变化
+
+在 ES2019 中，Function.prototype.toString 方法得到了修订，规范化了其行为。根据规范，toString 方法现在必须返回一段能够表示函数定义的精确字符序列。这意味着返回的字符串应该与函数被定义时的原始源代码尽可能相似。
+
+```js
+function exampleFunction() {
+  // 这是一个示例函数
+}
+
+console.log(exampleFunction.toString());
+
+/**
+ * "function exampleFunction() {
+ *   // 这是一个示例函数
+ * }"
+ * */
+```
+
+#### 修订的影响
+
+- 更好的调试体验：开发者可以更准确地查看和调试函数的原始代码。
+- 更一致的行为：不同的 JavaScript 引擎现在在实现 Function.prototype.toString 方法时应该表现得更加一致。
+- 代码完整性：现在 toString 方法返回的代码包括了函数的整个定义，包括参数列表和函数体。
+
+#### 注意事项
+
+- 即使经过了修订，Function.prototype.toString 方法返回的代码仍然可能包含一些实现细节，这取决于具体的 JavaScript 引擎。
+- 有些情况下，比如对于由 JavaScript 引擎内部创建的函数，或者某些特殊的环境（如某些优化模式），toString 方法可能无法返回一个有效的源代码表示。
+- toString 方法不应该被用于函数的逻辑判断或者功能实现，因为它的主要目的是为了调试和显示函数的源代码。

@@ -1,22 +1,5 @@
 # 基本语法
 
-- 字符串和正则表达式: 字符串处理方法和正则表达式的使用。
-- Object.values/Object.entries: 返回一个对象自身的所有可枚举属性值的数组/Object.entries()返回一个数组，其元素是与直接在 object 上找到的可枚举属性键值对相对应的数组。
-- Object.fromEntries: 将键值对列表转换为一个对象。
-- String padding: String.prototype.padStart 和 String.prototype.padEnd 允许你将空字符串或其他字符串添加到原始字符串的开头或结尾。
-- String.prototype.trimStart/trimEnd: 用于去除字符串开头/结尾的空白字符。
-- String.prototype.matchAll: 返回一个迭代器，它产生所有匹配正则表达式的匹配对象。
-- String.prototype.replaceAll: 允许你替换字符串中的所有匹配项。
-- 正则表达式命名捕获组: 允许给正则表达式的捕获组命名。
-- 正则表达式反向断言: 允许匹配前面不是特定模式的字符串。
-- 正则表达式 dotAll 模式: 允许点（.）匹配任何单个字符，包括换行符和其他通常不被匹配的字符。
-- RegExp Match Indices: 正则表达式匹配对象的 .indices 属性，提供了匹配字符串的起始和结束索引。
-- Template Literal Revision: 允许模板文字中的嵌入表达式包含字符串字面量。
-- 可选的 Catch Binding: 允许 catch 语句省略异常变量。
-- Function.prototype.toString 的修订: toString() 方法返回的字符串将与函数的源代码保持一致性。
-- Ergonomic brand checks for Private Fields: 提供了一种更简洁的方式来检查一个对象是否包含某个私有字段。
-- Temporal API: 提供了一套新的 API 用于处理日期和时间。
-
 ## 变量
 
 ### var、let、const 使用场景与注意事项
@@ -1055,6 +1038,50 @@ processObject(obj2);
 obj1 = null; // obj1可以被垃圾回收，seenObjects中的记录也会被清除
 ```
 
+## Temporal
+
+Temporal 是一个现代的日期和时间管理的 JavaScript API，它旨在解决 Date 对象的一些长期存在的问题和局限性。Temporal 提供了多个独立的对象类型，以更直观、更强大的方式处理日期、时间、时区、持继时间等概念。
+
+### 核心组件
+
+- Temporal.Instant：表示一个独立于时区的单一时间点，类似于 UNIX 时间戳。
+- Temporal.PlainDate：表示没有时间和时区的日期。
+- Temporal.PlainTime：表示没有日期和时区的时间。
+- Temporal.PlainDateTime：表示没有时区的日期和时间。
+- Temporal.ZonedDateTime：表示带有时区的日期和时间。
+- Temporal.Duration：表示一个时间长度或持续时间。
+- Temporal.TimeZone：表示时区，可以获取时区的相关信息。
+- Temporal.Calendar：表示日历，支持多种日历系统。
+
+### 特点
+
+- 不可变性：Temporal 对象是不可变的，这意味着它们的方法不会更改对象本身，而是返回一个新的修改过的对象。
+- 链式调用：由于不可变性，可以方便地进行链式调用，例如 date.add({ days: 1 }).with({ month: 2 })。
+- 清晰的区分：Temporal 明确区分了本地时间和带时区的时间，避免了许多与时区相关的常见错误。
+- 国际化：内置对不同日历系统的支持，如伊斯兰历、希伯来历等。
+- 精确度：提供了纳秒级的精度，适合需要高精度时间处理的应用。
+
+```js
+const now = Temporal.Now.plainDateTimeISO();
+console.log(now.toString()); // 2024-06-17T12:34:56
+
+const duration = Temporal.Duration.from({ hours: 1, minutes: 30 });
+const later = now.add(duration);
+console.log(later.toString()); // 2024-06-17T14:04:56
+
+const timeZone = Temporal.TimeZone.from('Europe/Paris');
+const zonedTime = now.withTimeZone(timeZone);
+console.log(zonedTime.toString()); // 2024-06-17T12:34:56+02:00[Europe/Paris]
+```
+
+在这个例子中，使用 Temporal.Now.plainDateTimeISO() 获取当前的日期和时间（不带时区），然后创建一个持续时间对象 duration，并将其添加到当前时间上。最后，将不带时区的时间转换为带有特定时区的时间。
+
+#### 注意事项
+
+- Temporal API 目前是一个 Stage 3 的 ECMAScript 提案，这意味着它已经接近最终阶段，但可能还会有一些变动。
+- Temporal API 的设计目标是与现有的 Date 对象共存，而不是替换它。
+- 在使用 Temporal API 时，需要注意浏览器的兼容性或者使用相应的 polyfill。
+
 ## globalThis
 
 ### 概述
@@ -1400,9 +1427,55 @@ for (let value of set) {
 
 ## 错误处理
 
+### 可选的 Catch Binding
+
+可选的 Catch Binding 是 JavaScript 中的一个特性，允许在 catch 语句中省略异常变量的绑定。这个特性在 ES2019（ECMAScript 2019）中被正式加入到了 JavaScript 语言规范中。
+
+#### 传统的 Catch Binding
+在 ES2019 之前，当你使用 try...catch 语句捕获异常时，需要明确指定一个变量来接收异常对象，如下所示：
+
+```js
+try {
+  // 可能会抛出错误的代码
+} catch (error) {
+  // 处理错误
+}
+```
+
+#### 可选的 Catch Binding 的使用
+
+ES2019 引入的可选的 Catch Binding 允许你在不关心异常对象时省略这个变量，代码如下：
+
+```js
+try {
+  // 可能会抛出错误的代码
+} catch {
+  // 处理错误，但不需要访问错误对象
+}
+```
+
+#### 为什么使用可选的 Catch Binding
+
+有些情况下，你可能并不需要访问具体的错误对象，只想知道是否发生了错误并进行相应的处理。在这种情况下，可选的 Catch Binding 可以让代码看起来更简洁。
+
+```js
+try {
+  // 一些可能出错的代码
+  throw new Error('出错了！');
+} catch {
+  // 仅仅知道出错了，并执行一些无需错误对象的操作
+  console.log('发生了一个错误，但我们不关心错误的具体内容。');
+}
+```
+
+#### 注意事项
+
+- 可选的 Catch Binding 并不意味着错误可以被忽略，它只是提供了一种在不需要错误对象时简化代码的方式。
+- 即使省略了错误对象，catch 块仍然会捕获所有的异常，因此你应该确保在 catch 块内部进行适当的错误处理。
+
 ### 错误处理最佳实践
 
-1. 使用 Error 对象而非字符串或其他类型
+#### 1. 使用 Error 对象而非字符串或其他类型
    使用 Error 对象抛出错误而不是字符串或其他原始类型，因为 Error 对象包含了堆栈追踪和其他有用的调试信息。
 
 ```js
@@ -1413,7 +1486,7 @@ throw new Error('Something went wrong');
 throw 'Something went wrong';
 ```
 
-2. 为错误创建自定义类
+#### 2. 为错误创建自定义类
    为不同类型的错误创建自定义错误类，这有助于错误的识别和处理。继承自 Error 类可以保证堆栈追踪的完整性。
 
 ```js
@@ -1430,7 +1503,7 @@ class CustomError extends Error {
 }
 ```
 
-### 3. 只捕获你能处理的错误
+#### 3. 只捕获你能处理的错误
 
 使用 try...catch 时，只捕获那些你确实能够处理的错误。不要捕获所有错误，否则可能会掩盖潜在的问题。
 
@@ -1447,7 +1520,7 @@ try {
 }
 ```
 
-### 4. 使用 finally 清理资源
+#### 4. 使用 finally 清理资源
 
 无论是否发生错误，都需要执行清理工作时，使用 finally 块。这确保了资源总是被正确释放。
 
@@ -1461,7 +1534,7 @@ try {
 }
 ```
 
-### 5. 避免使用空的 catch 块
+#### 5. 避免使用空的 catch 块
 
 空的 catch 块会吞掉所有错误，这会使得调试变得非常困难。如果你不想处理某个错误，至少要记录它。
 
@@ -1475,7 +1548,7 @@ try {
 }
 ```
 
-### 6. 对于异步代码使用 Promise 的 catch 方法或 async/await
+#### 6. 对于异步代码使用 Promise 的 catch 方法或 async/await
 
 使用 Promise 的.catch()方法或 async/await 结合 try...catch 来处理异步操作中的错误。
 
@@ -1500,11 +1573,11 @@ async function asyncFunction() {
 }
 ```
 
-### 7. 不要忽略错误
+#### 7. 不要忽略错误
 
 不要忽略捕获到的错误，即使你认为它们不重要。未处理的错误可能会导致更严重的问题。
 
-### 8. 使用错误边界（Error Boundaries）
+#### 8. 使用错误边界（Error Boundaries）
 
 在前端框架（如 React）中，使用错误边界来捕获子组件树中的 JavaScript 错误，防止整个应用崩溃。
 
@@ -1518,11 +1591,11 @@ class ErrorBoundary extends React.Component {
 }
 ```
 
-### 9. 利用工具和策略进行错误监控
+#### 9. 利用工具和策略进行错误监控
 
 使用错误监控工具（如 Sentry, Rollbar 等）来记录和分析生产环境中的错误，以便及时响应和修复。
 
-### 10. 进行单元测试和集成测试
+#### 10. 进行单元测试和集成测试
 
 通过编写单元测试和集成测试来确保代码的健壮性，并在代码更改后及时发现新引入的错误。
 

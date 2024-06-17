@@ -386,6 +386,69 @@ console.log(circle.radius); // 2
 
 在这个例子中，即使圆的表示方式从直径变为半径，对于使用 diameter 的代码来说接口依然是一致的。
 
+### Object.values
+
+Object.values 方法返回一个数组，包含给定对象自身的所有可枚举属性值，**不包括原型链上的属性**。数组中值的排列顺序与使用 for...in 循环（或 Object.keys 方法）遍历该对象时返回的顺序一致。
+
+```js
+const object1 = {
+  a: 'somestring',
+  b: 42,
+  c: false
+};
+
+console.log(Object.values(object1));
+// 输出: ["somestring", 42, false]
+```
+
+### Object.entries
+
+Object.entries 方法返回一个数组，其元素是与直接在对象上找到的可枚举属性键值对相对应的数组。数组中的每个元素都是一个包含两个元素的数组，第一个元素是属性名（key），第二个元素是属性值（value）。
+
+```js
+const object1 = {
+  a: 'somestring',
+  b: 42,
+  c: false
+};
+
+console.log(Object.entries(object1));
+// 输出: [["a", "somestring"], ["b", 42], ["c", false]]
+```
+
+### Object.fromEntries
+
+Object.fromEntries 方法是 Object.entries 的逆操作，它用于将键值对列表转换为一个对象。这个方法接受一个可迭代的键值对集合（通常是一个二维数组），并返回一个新对象，其中的键值对来自于提供的可迭代对象。
+
+```js
+const entries = new Map([
+  ['foo', 'bar'],
+  ['baz', 42]
+]);
+
+const object = Object.fromEntries(entries);
+
+console.log(object);
+// 输出: { foo: "bar", baz: 42 }
+```
+
+或者，如果你有一个键值对数组，也可以使用 Object.fromEntries 来创建一个对象：
+
+```js
+const entries = [['foo', 'bar'], ['baz', 42]];
+
+const object = Object.fromEntries(entries);
+
+console.log(object);
+// 输出: { foo: "bar", baz: 42 }
+```
+
+**应用场景**
+
+- 将 Map 转换为对象。
+- 将键值对数组转换为对象。
+- 配合 Object.entries 实现对象的浅拷贝或转换操作。
+
 ## 原型（Prototype）
 
 - 原型的定义：原型是 JavaScript 中用于实现对象继承的一种机制。每个 JavaScript 对象在创建时都会与另一个对象关联起来，这个对象就是我们所说的原型，每个对象都会从原型“继承”属性和方法。
@@ -844,6 +907,54 @@ Object.assign(Dog.prototype, sayMixin);
 let dog = new Dog('Rex');
 dog.say('Woof'); // Rex says: Woof
 ```
+
+### Ergonomic brand checks for Private Fields
+
+#### 简介
+
+在 JavaScript 中，类的私有字段（private fields）是一种只能在类的内部访问的字段，通常用 # 符号来声明。在 ES2022 之前，检查一个对象是否包含某个私有字段需要通过捕获抛出的错误来实现，这并不是特别方便。ES2022 引入了一种新的语法，称为“Ergonomic brand checks for Private Fields”，它提供了一种更简洁的方式来进行这种检查。
+
+```js
+class Example {
+  #privateField;
+
+  static hasPrivateField(instance) {
+    return #privateField in instance;
+  }
+}
+```
+
+在这个新语法中，使用 #privateField in instance 来检查 instance 对象是否包含名为 #privateField 的私有字段。如果私有字段存在于对象中，表达式的结果为 true；否则为 false。
+
+#### 优势
+
+1. 简洁性：新语法比旧有的 try-catch 方法更简洁，代码更易读。
+2. 性能：避免了异常处理的开销，可能提高代码的运行效率。
+3. 明确性：直接的语法使得意图更加明确，即进行品牌检查（brand check），而不是尝试访问字段。
+
+示例
+```js
+class MyClass {
+  #myPrivateField;
+
+  checkPrivateField(obj) {
+    return #myPrivateField in obj;
+  }
+}
+
+const instance = new MyClass();
+console.log(instance.checkPrivateField(instance)); // true
+console.log(instance.checkPrivateField({})); // false
+```
+
+在这个例子中，MyClass 类有一个私有字段 #myPrivateField。checkPrivateField 方法使用新的语法来检查传入的对象是否包含这个私有字段。
+
+#### 注意事项
+
+- 这种检查只适用于私有字段，不适用于公共字段或方法。
+- 私有字段的名称是以 # 开头的，这是区分私有和公共属性的方式。
+- 这种语法只能在类的方法或者类的静态方法中使用，不能在类的外部使用。
+
 
 ### 为什么说 class 是语法糖？
 
