@@ -1,22 +1,146 @@
 # 高级特性
 
-- 异步编程: 回调函数、Promises、async/await、事件循环。
 - 模块化: CommonJS、ES6 Modules、动态导入。
 - Dynamic Import: 允许你在需要的时候再导入模块。
 - import.meta: 一个提供有关模块的信息的元数据对象。
 - 事件处理: 事件监听、事件委托、自定义事件。
 - 内存管理: 垃圾回收机制、内存泄漏问题。
-- 迭代器（Iterator）和生成器（Generator）: 引入了迭代器协议和生成器函数，可以自定义迭代行为。
 - Proxy: Proxy 用于创建一个对象的代理，从而实现基本操作的拦截和自定义。
 - Reflect: Reflect 是一个内置的对象，它提供拦截 JavaScript 操作的方法。
-- Async/Await: 用于简化使用 Promise 的异步操作。
-- 异步迭代（for-await-of）: 允许你迭代等待 Promise 解决的异步可迭代对象。
-- Promise.finally: 用于指定不管 Promise 对象最后状态如何，都会执行的操作。
-- Promise.allSettled: 返回一个在所有给定的 promise 已经兑现或被拒绝后的 promise，并带有一个对象数组，每个对象表示对应的 promise 结果。
-- Promise.any: 类似于 Promise.race，但只要其中的一个 promise 兑现，就返回那个已经兑现的 promise。
-- Rest/Spread 属性: 对象字面量中的剩余属性和扩展属性。
 - WeakRefs: 引入了弱引用（WeakRef）和最终化注册表（FinalizationRegistry），允许开发者手动管理内存。
 - Top-Level await: 允许在模块的顶层使用 await 关键字。
+
+## 回调函数
+
+### 回调函数的定义
+
+回调函数是一种将函数作为参数传递给另一个函数，并在那个函数执行完毕后再执行传递的函数的技术。这种模式在异步编程中非常常见，特别是在处理诸如网络请求、文件操作或任何需要等待完成的任务时。
+
+### 回调函数的使用
+
+回调函数通常用于异步操作，当异步操作完成时，回调函数被调用以处理结果或继续执行后续代码。例如，在使用 setTimeout 函数时，回调函数用于指定在定时器到期后应执行的代码。
+
+```js
+setTimeout(function() {
+    console.log('Hello after 2 seconds');
+}, 2000);
+```
+
+### 回调地狱（Callback Hell）
+
+随着异步操作的增加，回调函数可能会导致所谓的“回调地狱”或“金字塔厄运”，其中回调函数嵌套得越来越深，代码变得难以阅读和维护。
+
+```js
+getData(function(a){
+    getMoreData(a, function(b){
+        getMoreData(b, function(c){
+            console.log('Got the data:', c);
+        });
+    });
+});
+```
+
+### 解决回调地狱
+
+为了解决这个问题，JavaScript引入了Promises和async/await语法，它们提供了更好的异步控制流程，使得代码更加简洁和易于理解。
+
+### 事件监听器也使用回调函数
+
+回调函数不仅限于传统的异步操作，它们也被用作事件监听器，当特定事件发生时执行。
+
+```js
+document.getElementById('myButton').addEventListener('click', function() {
+    console.log('Button clicked!');
+});
+```
+
+### 前端和后端中的应用
+
+前端开发中，回调函数用于处理用户交互、定时器、网络请求等。在Node.js等后端JavaScript环境中，回调函数用于处理文件系统操作、数据库查询等。
+
+### 控制反转
+
+回调函数的一个重要概念是控制反转，调用者将执行控制权交给了函数参数（回调函数）。这就要求开发者信任外部代码（提供回调函数的库或API）会正确地调用回调函数。
+
+### 错误处理
+
+在回调模式中，错误处理通常通过传递一个额外的参数给回调函数来实现，这个参数表示错误或异常。
+
+```js
+fs.readFile('somefile.txt', function(err, data) {
+    if (err) {
+        console.error('There was an error reading the file!', err);
+        return;
+    }
+    console.log('File content:', data);
+});
+```
+
+## 事件循环
+
+事件循环使得JavaScript可以执行复杂的任务，如处理大量计算、文件操作和网络请求，而不会阻塞主线程，从而保持高效的用户交互和流畅的界面渲染。理解事件循环对于编写高效且可靠的JavaScript应用至关重要。
+
+### 事件循环的概念
+
+事件循环是JavaScript运行时环境的一部分，它负责协调代码执行、事件分发、定时器安排和异步I/O操作。它允许JavaScript在单线程中运行，同时处理异步操作。
+
+### 宏任务和微任务
+
+事件循环处理两种类型的任务：宏任务（Macro Tasks）和微任务（Micro Tasks）。
+
+- 宏任务包括：脚本（整体代码）、setTimeout、setInterval、I/O、UI渲染等。
+- 微任务包括：Promise回调、MutationObserver、process.nextTick（Node.js特有）等。
+
+### 事件循环的工作流程
+
+1. 执行全局脚本代码，这属于宏任务。
+2. 执行完当前宏任务后，查看微任务队列，如果有微任务，执行它们。
+3. 微任务执行完毕后，进行必要的UI渲染。
+4. 开始下一个宏任务（如setTimeout中指定的回调函数），重复步骤2。
+
+### 微任务的优先级
+
+微任务总是在当前宏任务完成后立即执行，这意味着它们在宏任务和渲染之间执行，因此它们可以更快地响应。
+
+### 事件循环的示例
+
+```js
+console.log('Script start'); // 宏任务
+
+setTimeout(function() {
+    console.log('setTimeout'); // 宏任务
+}, 0);
+
+Promise.resolve().then(function() {
+    console.log('promise1'); // 微任务
+}).then(function() {
+    console.log('promise2'); // 微任务
+});
+
+console.log('Script end'); // 宏任务
+```
+
+输出顺序将是：
+
+```bash
+Script start
+Script end
+promise1
+promise2
+setTimeout
+```
+
+### 事件循环和异步编程
+
+事件循环是实现异步编程的关键，它允许JavaScript代码非阻塞地执行，提高了应用的响应性和性能。
+
+### Node.js中的事件循环
+
+Node.js虽然也是单线程，但它的事件循环有一些区别，特别是在处理I/O操作时。Node.js使用了libuv库来实现其事件循环和异步I/O。
+
+### 浏览器中的事件循环
+
+在浏览器中，事件循环与Web APIs（如DOM事件、AJAX请求等）紧密相关，并且与渲染引擎协同工作以更新UI。
 
 ## 迭代器（Iterator）
 
@@ -486,6 +610,54 @@ let promise = new Promise(function(resolve, reject) {
 - Promise.resolve(value): 返回一个以给定值解析后的Promise对象。
 - Promise.reject(reason): 返回一个以给定理由拒绝的Promise对象。
 
+#### Promise.allSettled
+
+Promise.allSettled 是一个静态方法，它接收一个Promise对象的数组作为参数，并返回一个新的Promise。这个新的Promise会在所有给定的Promise都已经完成（无论是成功的fulfilled还是失败的rejected）后被解决(resolve)。
+
+- Promise.all 只有当所有的Promise都成功解决时才会解决，如果有任何一个Promise被拒绝，整个Promise.all返回的Promise就会立即被拒绝。
+- Promise.allSettled 不管其中的Promise是成功还是失败，都会等待所有的Promise都完成，然后返回一个包含所有Promise结果的数组。
+
+Promise.allSettled返回的Promise解决后的结果是一个对象数组，每个对象代表传入的Promise数组中的一个Promise的结果。每个对象都有一个status属性，表示该Promise是已经完成（fulfilled）还是被拒绝（rejected）。如果Promise成功完成，对象会有一个value属性包含相应的值；如果Promise失败，对象会有一个reason属性表示拒绝的原因。
+
+```js
+const promise1 = Promise.resolve(3);
+const promise2 = new Promise((resolve, reject) => setTimeout(reject, 100, 'foo'));
+const promises = [promise1, promise2];
+
+Promise.allSettled(promises).
+  then((results) => results.forEach((result) => console.log(result.status)));
+
+// 输出:
+// "fulfilled"
+// "rejected"
+```
+
+#### Promise.any
+
+Promise.any 是一个接受多个Promise对象的数组（或任何可迭代对象）作为输入，并返回一个单一的Promise的方法。它解析为输入中第一个成功解析（fulfilled）的Promise的结果。如果所有的Promise都被拒绝（rejected），则返回一个拒绝的Promise，其拒绝原因是一个AggregateError类型的实例，包含了所有Promise的拒绝理由。
+
+```js
+const promise1 = Promise.reject(0);
+const promise2 = new Promise((resolve) => setTimeout(resolve, 100, 'quick'));
+const promise3 = new Promise((resolve) => setTimeout(resolve, 500, 'slow'));
+
+const promises = [promise1, promise2, promise3];
+
+Promise.any(promises).then((value) => {
+  console.log(value); // "quick"
+}).catch((error) => {
+  console.error(error);
+});
+```
+
+如果传入的可迭代对象为空，或者所有的Promise都失败了，Promise.any会返回一个拒绝的Promise。对于后者，它会拒绝一个AggregateError，一个包含所有拒绝原因的错误对象。
+
+```js
+Promise.any([]).catch((error) => {
+  console.error(error); // AggregateError: All promises were rejected
+});
+```
+
 ### 4. 错误处理
 捕获错误: 通过.catch()方法可以捕获Promise链中任何阶段的错误，防止错误“吞没”。
 
@@ -630,4 +802,241 @@ async function fetchDataAsync() {
 ```
 
 ## async/await
-## 异步编程
+
+async/await 是写异步代码的新方法，它允许你以同步代码的方式来写异步代码。这种语法是建立在Promises之上，并且与它们相兼容。
+
+async 关键字用于声明一个异步函数，它会隐式地返回一个Promise对象。如果async函数返回一个值，Promise会被解析为返回的值；如果async函数抛出错误，则Promise被拒绝。
+
+await 关键字只能在async函数内部使用。它会暂停async函数的执行，等待Promise解析完成。当Promise成功解析时，函数会恢复执行，并返回解析后的值。
+
+在async函数中，可以使用传统的try/catch结构来处理错误，这样可以捕获await表达式中可能出现的拒绝(Promise被拒绝)。
+
+```js
+async function fetchData() {
+  try {
+    const response = await fetch('https://api.example.com/data');
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error('Fetching data failed', error);
+  }
+}
+```
+
+使用await可能会导致性能问题，因为它会在每个await表达式处停止函数的执行。在可能的情况下，并行执行多个异步操作可以提高效率。可以使用Promise.all来同时执行多个await表达式。
+
+```js
+async function fetchMultipleUrls(urls) {
+  const promises = urls.map(url => fetch(url).then(r => r.json()));
+  return await Promise.all(promises);
+}
+```
+
+### 异步迭代（for-await-of）
+
+异步迭代是JavaScript中处理异步操作时的一种模式，特别是当这些操作是在集合中逐个发生时。for-await-of语句创建一个循环，用于迭代异步的可迭代对象，例如由异步生成器函数产生的对象。这使得程序能够在每次异步操作完成后继续执行，而不是一次性等待所有操作完成。
+
+假设有一个异步生成器函数，它异步地产生一系列值：
+
+```js
+async function* asyncGenerator() {
+  let i = 0;
+  while (i < 3) {
+    // 模拟异步操作，如从服务器获取数据
+    await new Promise(resolve => setTimeout(resolve, 100));
+    yield i++;
+  }
+}
+```
+
+这段代码会异步地打印出0、1和2。每个值在被yield之后，循环会等待直到下一个值被yield。
+
+使用for-await-of循环来遍历这些值：
+
+```js
+(async () => {
+  for await (const num of asyncGenerator()) {
+    console.log(num);
+  }
+})();
+```
+
+在for-await-of循环中，如果异步迭代过程中出现错误，可以使用try...catch语句来捕获异常：
+
+```js
+(async () => {
+  try {
+    for await (const num of asyncGenerator()) {
+      // 可能会抛出错误的操作
+      if (num === 2) {
+        throw new Error('Something went wrong');
+      }
+      console.log(num);
+    }
+  } catch (error) {
+    console.error(error); // 处理错误
+  }
+})();
+```
+
+在这个例子中，当num等于2时，会抛出一个错误，然后被catch块捕获并处理。这允许程序在发生错误时优雅地处理异常情况，而不是直接中断整个循环。
+
+### 为什么说async/await是语法糖
+
+async/await被称为语法糖，是因为它们实际上是基于JavaScript中的Promises模型的。它们并没有引入任何新的异步编程功能，但是提供了一种更加优雅的方式来处理基于Promise的异步操作。
+
+- Promise 提供了一种处理异步操作的方法，通过.then()和.catch()方法来处理异步操作的成功和失败。
+- async/await 使得异步代码看起来和同步代码类似，通过使用async函数声明和await操作符，可以以同步的方式编写异步代码，从而提高代码的可读性和维护性。
+
+```js
+// 使用Promise的示例
+function fetchData() {
+  return fetch('https://api.example.com/data')
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Fetching data failed', error));
+}
+
+// 使用async/await的示例
+async function fetchData() {
+  try {
+    const response = await fetch('https://api.example.com/data');
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error('Fetching data failed', error);
+  }
+}
+```
+
+### async/await与generator+promise的关系
+
+- 相关性：async/await可以被看作是generator函数和Promise的更高级的抽象。在async/await出现之前，开发者可以使用generator函数配合Promise来模拟async/await的行为，通过自己编写或使用库（如co）来控制异步流程。
+- 区别：尽管async/await和generator+Promise在处理异步操作上有相似之处，但async/await是一个内置的、更简洁的语法结构，不需要额外的库支持，也不需要手动控制generator的执行。async/await自动处理了Promise的执行和异常处理，减少了样板代码。
+- async/await并不是直接封装了generator+Promise，但它们在概念上是相关的，因为async/await提供了一种更加简洁和直观的方式来处理异步操作，这在generator+Promise的模式下也是可以做到的，但需要更多的代码和管理。
+- async/await是语言层面的支持，它让异步代码的编写变得更加简单和直观，而不需要显式地使用generator和Promise。
+
+```js
+// 假设有一个返回Promise的异步函数
+function fetchSomething() {
+    return new Promise((resolve) => {
+        setTimeout(() => resolve('some data'), 1000);
+    });
+}
+
+// 使用generator+promise来模拟async/await
+function* generatorFunction() {
+    // yield关键字用来暂停和恢复执行
+    const result = yield fetchSomething();
+    console.log(result); // 输出 'some data'，类似于await的效果
+}
+
+// 运行generator函数并处理Promise
+function runGenerator(genFunc) {
+    const iterator = genFunc(); // 获取迭代器对象
+
+    // 用于处理每一步的函数
+    function step(nextFunc) {
+        let next;
+        try {
+            // 执行下一步
+            next = nextFunc();
+        } catch (e) {
+            // 如果出现错误，直接结束迭代器
+            return iterator.throw(e);
+        }
+        if (next.done) {
+            // 如果迭代器完成，直接返回结果
+            return next.value;
+        }
+        // Promise.resolve确保无论是Promise还是普通值都能正确处理
+        Promise.resolve(next.value).then(
+            (v) => {
+                // 成功时，继续下一步
+                step(() => iterator.next(v));
+            },
+            (e) => {
+                // 出错时，抛出错误
+                step(() => iterator.throw(e));
+            }
+        );
+    }
+
+    // 开始执行迭代器的第一步
+    step(() => iterator.next(undefined));
+}
+
+// 运行模拟的async/await
+runGenerator(generatorFunction);
+```
+
+### 最佳实践
+
+#### 1. 使用try/catch进行错误处理
+
+使用async/await时，应该总是用try/catch块包裹await语句，以便于捕获并处理可能发生的错误。
+
+#### 2. 避免回调地狱
+
+async/await使得你可以避免使用过多的嵌套回调，从而避免所谓的"回调地狱"，使得代码更加清晰。
+
+#### 3. 利用并行执行
+
+当有多个互不依赖的异步操作时，应该并行执行它们以节省时间。可以使用Promise.all来实现。
+
+#### 4. 避免不必要的await
+
+如果你不需要等待某个异步操作的结果，就不要使用await，因为它会停止代码执行，直到Promise解决。
+
+#### 5. 使用async IIFE(立即调用的函数表达式)启动顶级await
+
+
+在模块的顶层使用await可能会导致问题，因为它会阻塞模块的加载。可以使用async IIFE来避免这个问题。
+
+```js
+(async () => {
+  const data = await fetchData();
+  console.log(data);
+})();
+```
+
+#### 6. 为了清晰性，明确返回Promise
+
+尽管async函数隐式返回一个Promise，但有时明确地返回Promise可以使代码的意图更加清晰。
+
+#### 7. 避免在循环中使用await
+
+在循环中使用await会导致每次迭代都等待，而不是并行执行。如果需要在循环中处理异步操作，应该考虑使用Promise.all。
+
+#### 8. 使用并发控制
+
+当需要并行执行大量异步操作时，应该使用一些库(如p-map或bluebird)来控制并发，避免同时启动过多的异步操作。
+
+#### 9. 优化错误消息
+
+当一个await表达式失败时，提供一个有意义的错误消息可以帮助调试。
+
+#### 10. 使用async/await与其他抽象结合
+
+例如，可以将async/await与Array.prototype.map()结合，以清晰地处理数组中的异步操作。
+
+#### 11. 避免在非异步函数中使用await
+
+await只能在async函数中使用，尝试在普通函数中使用它将导致语法错误。
+
+#### 12. 利用async函数的表达式形式
+
+async函数可以是声明式的，也可以是表达式。函数表达式可以是匿名的，也可以有名字，这为代码提供了更大的灵活性。
+
+#### 13. 保持一致的异步模式
+
+在项目中，应该保持一致的异步编程模式。如果你选择使用async/await，则尽量在所有异步代码中使用它。
+
+#### 14. 考虑使用顶层await
+
+在ES2020中引入的顶层await可以在模块的顶层直接使用await，但需要注意它可能会影响模块的加载时间。
+
+#### 15. 结合TypeScript或流类型检查
+
+使用TypeScript或Flow等类型检查工具可以帮助你更好地管理异步函数的返回类型，从而避免类型相关的错误。
+

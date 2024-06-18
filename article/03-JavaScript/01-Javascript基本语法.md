@@ -1734,3 +1734,77 @@ console.log(width, height, item1, item2, extra);
 - 从函数返回多个值
 - 函数参数定义
 - 解析函数参数中的对象属性
+
+## Rest/Spread 属性
+
+### 1. Rest属性 (...rest)
+
+Rest属性用于在对象或数组解构赋值时，将剩余的部分收集到一个变量中。
+
+**对象中的Rest属性**
+
+```js
+const { x, y, ...restOfObj } = { x: 1, y: 2, a: 3, b: 4 };
+console.log(restOfObj); // { a: 3, b: 4 }
+```
+
+**数组中的Rest属性**
+
+```js
+const [first, second, ...restOfArray] = [1, 2, 3, 4, 5];
+console.log(restOfArray); // [3, 4, 5]
+```
+
+### 2. Spread属性 (...spread)
+
+Spread属性用于在对象或数组字面量中，将一个对象或数组的所有可枚举属性展开。
+
+**对象中的Spread属性**
+
+```js
+const objA = { a: 1, b: 2 };
+const objB = { ...objA, c: 3 };
+console.log(objB); // { a: 1, b: 2, c: 3 }
+```
+
+**数组中的Spread属性**
+
+```js
+const arr1 = [1, 2];
+const arr2 = [...arr1, 3, 4];
+console.log(arr2); // [1, 2, 3, 4]
+```
+
+### 3. 应用场景
+
+**Rest属性**:
+
+- 在函数参数中收集剩余参数。
+- 在对象解构中排除特定属性，获取剩余属性。
+
+**Spread属性**:
+
+- 合并对象或数组。
+- 在React等框架中传递props。
+- 在函数调用时展开数组作为参数列表。
+
+### 4. 注意事项
+
+**Rest属性**:
+
+- 只能用于对象或数组解构的最后一个位置。
+- 生成的变量是一个新的对象或数组，不包含被解构赋值的属性或元素。
+
+**Spread属性**:
+
+- 在对象合并时，如果有同名属性，则后面的属性会覆盖前面的属性。
+- 在数组中使用时，可以用于在数组中插入更多的元素。
+
+### 5. ES6特性
+
+Rest/Spread属性是ES6（ECMAScript 2015）新增的特性，现在已经是现代JavaScript开发的标准做法。
+
+### 6. 兼容性和转译
+
+- 在一些老旧的JavaScript环境中可能不支持Rest/Spread属性。
+- 可以使用Babel等工具将其转译为ES5代码以确保兼容性。
