@@ -365,10 +365,160 @@ class CounterClass extends Component {
 export default CounterClass;
 ```
 
+在`increment`方法中触发了三次`this.setState`来增加`count`的值。由于`setState`的异步特性，三次更新将不会立即反映在`this.state.count`上，而是在`React`的更新周期中合并和处理。
 
-### 在异步事件中处理useState的更新方法
+- `setState`不是立即更新： 当你运行`this.setState({ count: this.state.count + 1 })`时，`React`并不会立即更新状态，而是将该更新请求放入一个队列中。这意味着，在每次调用`setState`时，`this.state.count`仍然反映的是更新前的值。
+- 合并更新：由于这三次调用都是独立的，`React`会在最后只更新一次状态。换句话说，只会读取`this.state.count`在三次调用之前的原始值。
 
+`setState`方法的逻辑可以参考下面的简单示例，但是需要注意是有些地方和直接看到的不同，比如直接理解下面代码，下面三次调用`mySetState`方法
 
+- 第一次调用，`this.state.count`值为`0`，`updater`参数值应该为`{ count: 1 }`，`this.state.count`应该为`1`。
+- 第二次调用，`this.state.count`值为`1`，`updater`参数值应该为`{ count: 2 }`，`this.state.count`应该为`2`。
+- 第三次调用，`this.state.count`值为`2`，`updater`参数值应该为`{ count: 3 }`，`this.state.count`应该为`3`。
+
+```js
+import React, { Component } from 'react';
+
+class MyComponent extends Component {
+  constructor(props) {
+    super(props);
+    // 初始化状态
+    this.state = {
+      count: 0
+    };
+
+    // 绑定方法
+    this.increment = this.increment.bind(this);
+  }
+
+  // 自定义 setState 方法
+  mySetState(updater) {
+    if (typeof updater === 'function') {
+      // 如果 updater 是个函数，调用它以获取新的状态
+      this.state = { ...this.state, ...updater(this.state) };
+    } else {
+      // 如果 updater 是个对象，直接合并到当前状态
+      this.state = { ...this.state, ...updater };
+    }
+    
+    // 重新渲染组件（模拟）
+    this.render();
+  }
+
+  // 增加计数的方法
+  increment() {
+    // 调用自定义的 setState 方法
+    this.mySetState({ count: this.state.count + 1 });
+    this.mySetState({ count: this.state.count + 1 });
+    this.mySetState({ count: this.state.count + 1 });
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>计数器: {this.state.count}</h1>
+        <button onClick={this.increment}>增加</button>
+      </div>
+    );
+  }
+}
+
+export default MyComponent;
+```
+
+但是实际结果却是`1`，为什么会出现这种问题？答案是**闭包**，当执行`React`真正执行`mySetState`方法时，`increment`方法已经执行完毕，因此此时调用的this.state.count是执行之前的值，每次调用是`this.state.count`值都是`0`，因此结果为`1`。可以用下面的代码简单理解，当执行`React`真正执行`mySetState`方法时，情况类似下面：
+
+```js
+(function(state) {
+  // 调用自定义的 setState 方法
+  this.mySetState({ count: state.count + 1 });
+  this.mySetState({ count: state.count + 1 });
+  this.mySetState({ count: state.count + 1 });
+}).call(this, this.state)
+```
+
+### 在异步事件中使用useState的更新方法
+
+下面是一个常见的示例，展示了如何在异步事件（如定时器）中遇到闭包问题：
+
+```js
+import React, { useState, useEffect } from 'react';
+
+const TimerComponent = () => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCount(count + 1); // 这里的 `count` 捕获了初始值
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []); // 依赖项为空，意味着只在组件挂载时运行
+
+  return <div>Count: {count}</div>;
+};
+
+export default TimerComponent;
+```
+
+在这个示例中：
+
+- 定时器设定在每秒钟将`count`增加 1。
+- 但是，因为依赖项数组为空，`useEffect`只运行一次（即组件挂载时），因此`count`在创建定时器时的值被捕获。
+- 由于`count`的值没有更新，定时器中的`count + 1`实际上每次还是在累加初始值，最终不会按预期工作。
+
+#### 现象分析
+
+1. 状态的作用域： 当你调用`useState`时，`React`会将当前的状态值保存在内存中。例如，假设你有如下代码：
+
+```js
+const [count, setCount] = useState(0);
+```
+在组件的每次渲染中，`count`都代表当前组件的状态。
+
+2. 定义函数时捕获的变量：当你在一个组件内定义一个函数（如事件处理器或定时器回调），该函数会捕获其外部作用域的变量。比如：
+
+```js
+useEffect(() => {
+  const timer = setInterval(() => {
+    console.log(count); // 捕获 count 的值
+    setCount(count + 1); // 使用捕获的值
+  }, 1000);
+}, []);
+```
+在这个例子中，`setInterval`在组件挂载时就被设置了。此时`count`的值被捕获，这意味着当定时器执行时，它使用的是挂载时的`count`值。随着`setCount`更新状态，新的渲染不会影响已经设定的定时器。
+
+3. 导致的结果：由于定时器内部使用了挂载时的`count`变量，当定时器每秒执行时，它会每次都在使用同一个、过时的`count`值。最终结果是，你的`count`不会如预期那样增加。
+
+#### 原因分析
+
+- **闭包的属性**：在`JavaScript`中，函数持有对其创建时闭包的引用。即使函数在其定义后被调用，它仍然会使用定义时的环境。这一点在`React`中尤其重要，因为组件的状态和生命周期管理的逻辑与`JavaScript`的原生闭包特性密切相关。
+
+- **React 的异步更新**：`React`的状态更新通常是异步的，尤其是在批量更新和事件处理时，这使得状态很可能在触发时与当前的闭包环境不同。因此，直接在异步函数中使用状态可能会导致意外的行为。
+
+#### 解决方案
+
+为了解决这个问题，可以使用`setState`的函数形式。这样可以确保你总是获得最新的状态值。[原因参考这里](#更新方法的参数是函数时的行为)
+
+```jsx
+import React, { useState, useEffect } from 'react';
+
+const TimerComponent = () => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCount(prevCount => prevCount + 1); // 使用 prevCount 确保获取最新值
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return <div>Count: {count}</div>;
+};
+
+export default TimerComponent;
+```
 
 ## 参考资料
 
